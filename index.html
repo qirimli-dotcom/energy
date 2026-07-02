@@ -17,13 +17,14 @@
     --mono:'JetBrains Mono',monospace; --display:'Space Grotesk',sans-serif; --body:'Inter',sans-serif;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  body{font-family:var(--body); background:var(--paper); color:var(--text-light);}
+  html{width:100%; overflow-x:hidden;}
+  body{font-family:var(--body); background:var(--paper); color:var(--text-light); width:100%; overflow-x:hidden;}
   a{color:inherit;}
   .wrap{max-width:1200px; margin:0 auto; padding:0 28px;}
   @media(max-width:560px){ .wrap{padding:0 16px;} }
 
   /* HEADER */
-  header{background:var(--ink); padding:18px 32px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:40; border-bottom:1px solid var(--line-dark);}
+  header{background:var(--ink); width:100%; padding:18px 32px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:40; border-bottom:1px solid var(--line-dark); box-sizing:border-box;}
   .brand{display:flex; align-items:center; gap:10px;}
   .logo-chip{background:#fff; border-radius:8px; padding:6px 10px; display:flex; align-items:center;}
   .logo-chip img{height:22px; width:auto; display:block;}
