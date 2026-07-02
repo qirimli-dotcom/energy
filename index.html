@@ -268,7 +268,7 @@ function currentList(){
   const q = document.getElementById('search').value.trim().toLowerCase();
   let list = products.filter(p => p.cat === currentCat);
   if(q) list = list.filter(p => p.name.toLowerCase().includes(q));
-  return list;
+  return list.sort((a, b) => a.price - b.price);
 }
 
 function keyFor(p){ return p.sku || p.name; }
