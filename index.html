@@ -166,6 +166,10 @@
   .detail-spec-card{background:var(--paper); border-radius:10px; padding:12px 14px;}
   .detail-spec-card .lbl{font-size:11.5px; color:var(--text-light-soft); margin-bottom:4px;}
   .detail-spec-card .val{font-family:var(--mono); font-size:14px; font-weight:600; color:var(--text-light);}
+  .detail-bullets-title{font-size:15px; font-weight:700; margin:24px 0 12px;}
+  .detail-bullets{list-style:none;}
+  .detail-bullets li{position:relative; padding-left:20px; font-size:14px; line-height:1.55; color:var(--text-light); margin-bottom:9px;}
+  .detail-bullets li::before{content:''; position:absolute; left:0; top:8px; width:7px; height:7px; border-radius:50%; background:var(--amber);}
   @media(max-width:760px){
     .detail-modal{flex-direction:column; border-radius:14px;}
     .detail-img{flex:none; padding:24px;}
@@ -287,15 +291,15 @@ const products = [
 {cat:'stations', name:"Pecron E500LFP", sku:"PEC-E500-LFP", price:30030, wh:576, power:"600 Вт", capacity:"576 Вт·ч (LiFePO₄)", weight:"6,8 кг", dims:"252 × 170 × 187 мм", desc:"Pecron E500LFP — компактная и мощная портативная электростанция с мощностью 600 Вт и ёмкостью 576 Вт·ч. Оснащена долговечным LiFePO₄ аккумулятором, функцией UPS, управлением через приложение и множеством выходов для подключения различных устройств. Быстрая зарядка и встроенный LED-фонарь делают её идеальным решением для кемпинга, путешествий и резервного питания.", img:"https://pecron.ru/_astro/e500lfp.CoC8rZhV.jpg"},
 {cat:'stations', name:"Pecron E300LFP", sku:"PEC-E300-LFP", price:24640, wh:288, power:"600 Вт", capacity:"288 Вт·ч (LiFePO₄)", weight:"4,8 кг", dims:"254 × 172 × 154 мм", desc:"Pecron E300LFP — компактная и мощная портативная электростанция, созданная для тех, кто ценит автономность, мобильность и надёжность. При весе всего 4.8 кг, она предлагает 600 Вт мощности и ёмкость 288 Вт·ч, что позволяет питать телефоны, ноутбуки, освещение, роутеры, холодильники и даже мелкую бытовую технику.", detail:{sockets:"1", expansion:"нет", solarCharge:"до 100 Вт", ups:"есть"}, img:"https://pecron.ru/_astro/e300lfp.CUyk_2xC.jpg"},
 
-{cat:'panels', name:"Pecron PV100", sku:"", price:11092, power:"100 Вт", type:"Монокристалл", efficiency:"До 23.4%", protection:"IP67", weight:"—", dims:"—", desc:"PECRON PV100 100W — высокоэффективная монокристаллическая солнечная панель. Пиковая мощность 105 Вт. Незаменима для путешествий, кемпинга и походов.", img:"https://optim.tildacdn.com/stor6432-6439-4231-b532-313966326665/-/format/webp/93812475.jpg.webp"},
-{cat:'panels', name:"Pecron PV200", sku:"", price:22474, power:"200 Вт", type:"Монокристалл", efficiency:"До 23.4%", protection:"IP67", weight:"—", dims:"—", desc:"PECRON PV200 — мощная и складная солнечная панель на 200 Вт. Прочный водостойкий корпус, совместима с большинством инверторов и портативных электростанций.", img:"https://static.tildacdn.com/stor6432-6439-4231-b532-313966326665/93812475.jpg"},
-{cat:'panels', name:"Pecron PV300", sku:"", price:32692, power:"300 Вт", type:"Монокристалл", efficiency:"До 23.4%", protection:"IP67", weight:"—", dims:"—", desc:"PECRON PV300 300W — мощная складная солнечная панель с высокой эффективностью ячеек. Идеально подходит для кемпинга, путешествий и аварийного энергоснабжения.", img:"https://optim.tildacdn.com/stor6432-6439-4231-b532-313966326665/-/format/webp/93812475.jpg.webp"},
+{cat:'panels', name:"Pecron PV100", sku:"", price:11092, power:"100 Вт", type:"Монокристалл", efficiency:"До 23.4%", protection:"IP67", weight:"—", dims:"—", desc:"Компактная складная солнечная панель для зарядки портативных электростанций Pecron.", bullets:["Компактная складная панель для зарядки электростанций Pecron в поездках.","Монокристаллические элементы обеспечивают высокий КПД.","Защита IP67 рассчитана на эксплуатацию на открытом воздухе."], img:"https://optim.tildacdn.com/stor6432-6439-4231-b532-313966326665/-/format/webp/93812475.jpg.webp"},
+{cat:'panels', name:"Pecron PV200", sku:"", price:22474, power:"200 Вт", type:"Монокристалл", efficiency:"До 23.4%", protection:"IP67", weight:"—", dims:"—", desc:"Складная солнечная панель для зарядки портативных электростанций Pecron.", bullets:["Складная монокристаллическая панель для автономной зарядки электростанций Pecron.","Подходит для поездок, кемпинга и резервных систем питания.","Защита IP67 помогает использовать панель на открытом воздухе."], img:"https://static.tildacdn.com/stor6432-6439-4231-b532-313966326665/93812475.jpg"},
+{cat:'panels', name:"Pecron PV300", sku:"", price:32692, power:"300 Вт", type:"Монокристалл", efficiency:"До 23.4%", protection:"IP67", weight:"—", dims:"—", desc:"Складная солнечная панель для зарядки портативных электростанций Pecron.", bullets:["Складная монокристаллическая панель для зарядки электростанций вдали от электросети.","Высокий КПД помогает эффективнее использовать доступный солнечный свет.","Защита IP67 рассчитана на использование панели на открытом воздухе."], img:"https://optim.tildacdn.com/stor6432-6439-4231-b532-313966326665/-/format/webp/93812475.jpg.webp"},
 
-{cat:'expansion', name:"Батарея EP3800-48V", sku:"", price:117810, capacity:"3840 Вт·ч", type:"LiFePO4", compat:"E1000, E1500, E2400, E3000, E3600, E3800, F3000", weight:"30 кг", desc:"PECRON EP3800-48V — модуль расширения ёмкости 3840 Вт·ч. Значительно увеличивает общую ёмкость совместимой станции, может использоваться как самостоятельный источник постоянного тока (DC).", img:"https://static.tildacdn.com/stor3666-3637-4263-a463-333862306537/28456291.jpg"},
-{cat:'expansion', name:"Батарея EP3000-24V", sku:"", price:117810, capacity:"3072 Вт·ч", type:"LiFePO4", compat:"E2000", weight:"25 кг", desc:"PECRON EP3000-24V — батарея-расширение 3072 Вт·ч для Pecron E2000LFP. Значительно увеличивает запас энергии, может использоваться как самостоятельный источник постоянного тока (DC).", img:"https://static.tildacdn.com/stor3666-3637-4263-a463-333862306537/28456291.jpg"},
+{cat:'expansion', name:"Батарея EP3800-48V", sku:"", price:117810, capacity:"3840 Вт·ч", type:"LiFePO4", compat:"E1000, E1500, E2400, E3000, E3600, E3800, F3000", weight:"30 кг", desc:"Новый блок расширения увеличенной емкости для совместимых электростанций Pecron.", bullets:["Увеличивает время автономной работы совместимых электростанций Pecron.","LiFePO4 аккумулятор рассчитан на длительную и безопасную эксплуатацию.","Подходит для построения более ёмкой системы резервного питания."], img:"https://static.tildacdn.com/stor3666-3637-4263-a463-333862306537/28456291.jpg"},
+{cat:'expansion', name:"Батарея EP3000-24V", sku:"", price:117810, capacity:"3072 Вт·ч", type:"LiFePO4", compat:"E2000", weight:"25 кг", desc:"Блок расширения емкости для электростанции Pecron E2000.", bullets:["Блок расширения разработан для увеличения ёмкости электростанции Pecron E2000.","LiFePO4 аккумулятор подходит для регулярного использования.","Позволяет увеличить время работы подключённой техники без замены основной станции."], img:"https://static.tildacdn.com/stor3666-3637-4263-a463-333862306537/28456291.jpg"},
 
-{cat:'accessories', name:"Зарядное DC1242-500", sku:"", price:16610, specs:[['Мощность','500 Вт (макс)'],['Вход','12V/24V DC'],['Выход','42V / 11.5A'],['Назначение','Быстрая зарядка в авто']], desc:"Автомобильное зарядное устройство PECRON DC1242-500 — для зарядки в дороге. Подходит для автомобилей, грузовиков, домов на колёсах. Совместимо с E600LFP, E1000PRO, E1500PRO, E1500LFP, E2000LFP, E3000.", img:"https://s.alicdn.com/@sc04/kf/Acc8be66deecd4a84b2c7f6fbf08adb88V.jpg?avif=close&webp=close"},
-{cat:'accessories', name:"Тележка", sku:"", price:6490, specs:[['Назначение','Транспортировка'],['Совместимость','Универсальная'],['Нагрузка','До 100 кг'],['Материал','Сталь']], desc:"Тележка PECRON Trolley Kit — удобная транспортировка портативных станций. Прочная стальная конструкция и лёгкий вес.", img:"https://optim.tildacdn.com/stor3330-6163-4536-a530-353236613266/-/format/webp/35144134.jpg.webp"},
+{cat:'accessories', name:"Зарядное DC1242-500", sku:"", price:16610, specs:[['Мощность','500 Вт (макс)'],['Вход','12V/24V DC'],['Выход','42V / 11.5A'],['Назначение','Быстрая зарядка в авто']], desc:"Автомобильное зарядное устройство для быстрой зарядки совместимых электростанций Pecron.", bullets:["Позволяет быстрее заряжать совместимые электростанции Pecron от автомобильной сети 12 или 24 В.","Максимальная мощность зарядки составляет 500 Вт.","Подходит для использования в поездках и длительных автономных выездах."], img:"https://s.alicdn.com/@sc04/kf/Acc8be66deecd4a84b2c7f6fbf08adb88V.jpg?avif=close&webp=close"},
+{cat:'accessories', name:"Тележка", sku:"", price:6490, specs:[['Назначение','Транспортировка'],['Совместимость','Универсальная'],['Нагрузка','До 100 кг'],['Материал','Сталь']], desc:"Транспортировочная тележка для удобного перемещения электростанций и блоков расширения Pecron.", bullets:["Упрощает транспортировку тяжёлых электростанций и блоков расширения Pecron.","Стальная конструкция рассчитана на нагрузку до 100 кг.","Подходит для перемещения оборудования дома, в мастерской и на выездных объектах."], img:"https://optim.tildacdn.com/stor3330-6163-4536-a530-353236613266/-/format/webp/35144134.jpg.webp"},
 ];
 
 let cart = {};
@@ -438,6 +442,10 @@ function openDetail(key){
   ).join('');
   document.getElementById('detailSpecs').classList.toggle('cols-2', p.cat === 'panels' || p.cat === 'expansion' || p.cat === 'accessories');
 
+  const bullets = p.bullets || [];
+  document.getElementById('detailBullets').innerHTML = bullets.map(b => `<li>${b}</li>`).join('');
+  document.getElementById('detailBulletsTitle').style.display = bullets.length ? '' : 'none';
+
   document.getElementById('detailOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -562,6 +570,8 @@ renderCart();
       <div class="detail-desc" id="detailDesc"></div>
       <div class="detail-specs-title">Ключевые характеристики</div>
       <div class="detail-specs-grid" id="detailSpecs"></div>
+      <div class="detail-bullets-title" id="detailBulletsTitle" style="display:none">Ключевые возможности</div>
+      <ul class="detail-bullets" id="detailBullets"></ul>
     </div>
   </div>
 </div>
