@@ -21,6 +21,12 @@
   body{font-family:var(--body); background:var(--paper); color:var(--text-light); width:100%; position:relative;}
   a{color:inherit;}
   .wrap{max-width:1200px; margin:0 auto; padding:0 28px;}
+  .lead-banner{background:#fff7ec; border-bottom:1px solid #f0e2c8; padding:11px 0;}
+  .lead-banner .wrap{display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:0 28px;}
+  .lead-banner svg{width:16px; height:16px; flex-shrink:0; color:var(--amber-deep);}
+  .lead-banner span{font-size:13px; color:var(--text-light);}
+  .lead-banner b{font-weight:700;}
+  @media(max-width:560px){ .lead-banner span{font-size:12px;} }
   @media(max-width:560px){ .wrap{padding:0 16px;} }
 
   /* HEADER */
@@ -243,6 +249,13 @@
     </button>
   </div>
 </header>
+
+<div class="lead-banner">
+  <div class="wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+    <span>Заказы принимаются. Срок производства — <b>ориентировочно 30 дней</b>, доставка по России — <b>15–18 дней</b>. Для оптовых объёмов условия поставки и цена обсуждаются индивидуально.</span>
+  </div>
+</div>
 
 <section class="catalog" id="catalog" style="padding-top:40px;">
   <div class="wrap">
