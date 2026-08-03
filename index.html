@@ -143,6 +143,7 @@
   .card .desc{font-size:12px; color:var(--text-light-soft); line-height:1.5; margin-bottom:16px; flex:1;}
   .price-row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px;}
   .price{font-family:var(--display); font-size:20px; font-weight:700;}
+  .price-req{font-family:var(--body); font-size:14px; font-weight:600; color:var(--text-light-soft); font-style:italic;}
   .price .cur{font-size:13px; color:var(--text-light-soft); font-weight:500;}
   .add-btn{width:100%; background:var(--amber); color:var(--ink); border:none; border-radius:9px; padding:13px; font-size:13.5px; font-weight:700; cursor:pointer; font-family:var(--body); transition:background .2s ease;}
   .add-btn:hover{background:var(--amber-deep);}
@@ -295,11 +296,11 @@ const products = [
 {cat:'panels', name:"Pecron PV200", sku:"", price:22474, power:"200 Вт", type:"Монокристалл", efficiency:"До 23.4%", protection:"IP67", weight:"—", dims:"—", desc:"Складная солнечная панель для зарядки портативных электростанций Pecron.", bullets:["Складная монокристаллическая панель для автономной зарядки электростанций Pecron.","Подходит для поездок, кемпинга и резервных систем питания.","Защита IP67 помогает использовать панель на открытом воздухе."], img:"https://static.tildacdn.com/stor6432-6439-4231-b532-313966326665/93812475.jpg"},
 {cat:'panels', name:"Pecron PV300", sku:"", price:32692, power:"300 Вт", type:"Монокристалл", efficiency:"До 23.4%", protection:"IP67", weight:"—", dims:"—", desc:"Складная солнечная панель для зарядки портативных электростанций Pecron.", bullets:["Складная монокристаллическая панель для зарядки электростанций вдали от электросети.","Высокий КПД помогает эффективнее использовать доступный солнечный свет.","Защита IP67 рассчитана на использование панели на открытом воздухе."], img:"https://optim.tildacdn.com/stor6432-6439-4231-b532-313966326665/-/format/webp/93812475.jpg.webp"},
 
-{cat:'expansion', name:"Батарея EP3800-48V", sku:"", price:117810, capacity:"3840 Вт·ч", type:"LiFePO4", compat:"E1000, E1500, E2400, E3000, E3600, E3800, F3000", weight:"30 кг", desc:"Новый блок расширения увеличенной емкости для совместимых электростанций Pecron.", bullets:["Увеличивает время автономной работы совместимых электростанций Pecron.","LiFePO4 аккумулятор рассчитан на длительную и безопасную эксплуатацию.","Подходит для построения более ёмкой системы резервного питания."], img:"https://static.tildacdn.com/stor3666-3637-4263-a463-333862306537/28456291.jpg"},
-{cat:'expansion', name:"Батарея EP3000-24V", sku:"", price:117810, capacity:"3072 Вт·ч", type:"LiFePO4", compat:"E2000", weight:"25 кг", desc:"Блок расширения емкости для электростанции Pecron E2000.", bullets:["Блок расширения разработан для увеличения ёмкости электростанции Pecron E2000.","LiFePO4 аккумулятор подходит для регулярного использования.","Позволяет увеличить время работы подключённой техники без замены основной станции."], img:"https://static.tildacdn.com/stor3666-3637-4263-a463-333862306537/28456291.jpg"},
+{cat:'expansion', name:"Батарея EP3800-48V", sku:"", price:104296, capacity:"3840 Вт·ч", type:"LiFePO4", compat:"E1000, E1500, E2400, E3000, E3600, E3800, F3000", weight:"30 кг", desc:"Новый блок расширения увеличенной емкости для совместимых электростанций Pecron.", bullets:["Увеличивает время автономной работы совместимых электростанций Pecron.","LiFePO4 аккумулятор рассчитан на длительную и безопасную эксплуатацию.","Подходит для построения более ёмкой системы резервного питания."], img:"https://static.tildacdn.com/stor3666-3637-4263-a463-333862306537/28456291.jpg"},
+{cat:'expansion', name:"Батарея EP3000-24V", sku:"", price:null, capacity:"3072 Вт·ч", type:"LiFePO4", compat:"E2000", weight:"25 кг", desc:"Блок расширения емкости для электростанции Pecron E2000.", bullets:["Блок расширения разработан для увеличения ёмкости электростанции Pecron E2000.","LiFePO4 аккумулятор подходит для регулярного использования.","Позволяет увеличить время работы подключённой техники без замены основной станции."], img:"https://static.tildacdn.com/stor3666-3637-4263-a463-333862306537/28456291.jpg"},
 
-{cat:'accessories', name:"Зарядное DC1242-500", sku:"", price:16610, specs:[['Мощность','500 Вт (макс)'],['Вход','12V/24V DC'],['Выход','42V / 11.5A'],['Назначение','Быстрая зарядка в авто']], desc:"Автомобильное зарядное устройство для быстрой зарядки совместимых электростанций Pecron.", bullets:["Позволяет быстрее заряжать совместимые электростанции Pecron от автомобильной сети 12 или 24 В.","Максимальная мощность зарядки составляет 500 Вт.","Подходит для использования в поездках и длительных автономных выездах."], img:"https://s.alicdn.com/@sc04/kf/Acc8be66deecd4a84b2c7f6fbf08adb88V.jpg?avif=close&webp=close"},
-{cat:'accessories', name:"Тележка", sku:"", price:6490, specs:[['Назначение','Транспортировка'],['Совместимость','Универсальная'],['Нагрузка','До 100 кг'],['Материал','Сталь']], desc:"Транспортировочная тележка для удобного перемещения электростанций и блоков расширения Pecron.", bullets:["Упрощает транспортировку тяжёлых электростанций и блоков расширения Pecron.","Стальная конструкция рассчитана на нагрузку до 100 кг.","Подходит для перемещения оборудования дома, в мастерской и на выездных объектах."], img:"https://optim.tildacdn.com/stor3330-6163-4536-a530-353236613266/-/format/webp/35144134.jpg.webp"},
+{cat:'accessories', name:"Зарядное DC1242-500", sku:"", price:null, specs:[['Мощность','500 Вт (макс)'],['Вход','12V/24V DC'],['Выход','42V / 11.5A'],['Назначение','Быстрая зарядка в авто']], desc:"Автомобильное зарядное устройство для быстрой зарядки совместимых электростанций Pecron.", bullets:["Позволяет быстрее заряжать совместимые электростанции Pecron от автомобильной сети 12 или 24 В.","Максимальная мощность зарядки составляет 500 Вт.","Подходит для использования в поездках и длительных автономных выездах."], img:"https://s.alicdn.com/@sc04/kf/Acc8be66deecd4a84b2c7f6fbf08adb88V.jpg?avif=close&webp=close"},
+{cat:'accessories', name:"Тележка", sku:"", price:null, specs:[['Назначение','Транспортировка'],['Совместимость','Универсальная'],['Нагрузка','До 100 кг'],['Материал','Сталь']], desc:"Транспортировочная тележка для удобного перемещения электростанций и блоков расширения Pecron.", bullets:["Упрощает транспортировку тяжёлых электростанций и блоков расширения Pecron.","Стальная конструкция рассчитана на нагрузку до 100 кг.","Подходит для перемещения оборудования дома, в мастерской и на выездных объектах."], img:"https://optim.tildacdn.com/stor3330-6163-4536-a530-353236613266/-/format/webp/35144134.jpg.webp"},
 ];
 
 let cart = {};
@@ -325,7 +326,7 @@ function currentList(){
   const q = document.getElementById('search').value.trim().toLowerCase();
   let list = products.filter(p => p.cat === currentCat);
   if(q) list = list.filter(p => p.name.toLowerCase().includes(q));
-  return list.sort((a, b) => a.price - b.price);
+  return list.sort((a, b) => (a.price || Infinity) - (b.price || Infinity));
 }
 
 function keyFor(p){ return p.sku || p.name; }
@@ -374,7 +375,7 @@ function render(){
         <div class="specs">
           ${specRows.map(([label,val]) => `<div class="spec-row"><div class="spec-icon">${specIcons[label]||''}</div><div class="spec-label">${label}</div><div class="spec-value">${val}</div></div>`).join('')}
         </div>
-        <div class="price-row"><span class="price">${fmt(p.price)} <span class="cur">₽</span></span></div>
+        <div class="price-row">${p.price ? `<span class="price">${fmt(p.price)} <span class="cur">₽</span></span>` : `<span class="price-req">Цена по запросу</span>`}</div>
         <button class="detail-btn" onclick="openDetail('${key.replace(/'/g,"\\'")}')">Подробнее</button>
         ${q === 0
           ? `<button class="add-btn" onclick="addItem('${key.replace(/'/g,"\\'")}')">В заказ</button>`
@@ -472,13 +473,14 @@ function renderCart(){
   const items = Object.entries(cart);
   const el = document.getElementById('cartItems');
   document.getElementById('cartCount').textContent = items.reduce((s,[,v]) => s+v.qty, 0);
-  const total = items.reduce((s,[,v]) => s + v.qty * v.product.price, 0);
-  document.getElementById('cartTotal').textContent = fmt(total) + ' ₽';
+  const hasNoPrice = items.some(([,v]) => !v.product.price);
+  const total = items.reduce((s,[,v]) => s + (v.product.price ? v.qty * v.product.price : 0), 0);
+  document.getElementById('cartTotal').textContent = fmt(total) + ' ₽' + (hasNoPrice ? ' + по запросу' : '');
   el.innerHTML = items.length ? items.map(([key,v]) => `
     <div class="cart-item">
       <div>
         <div class="name">${v.product.name}</div>
-        <div class="sub">${v.qty} × ${fmt(v.product.price)} ₽</div>
+        <div class="sub">${v.qty} × ${v.product.price ? fmt(v.product.price) + ' ₽' : 'цена по запросу'}</div>
       </div>
       <button class="remove" onclick="removeItem('${key}')">убрать</button>
     </div>
@@ -492,7 +494,7 @@ function toggleCart(open){
 
 function orderData(){
   const items = Object.entries(cart);
-  const total = items.reduce((s,[,v]) => s + v.qty * v.product.price, 0);
+  const total = items.reduce((s,[,v]) => s + (v.product.price ? v.qty * v.product.price : 0), 0);
   return { items, total, date: new Date().toLocaleDateString('ru-RU') };
 }
 
@@ -533,7 +535,7 @@ function downloadPDF(){
     const lines = doc.splitTextToSize(v.product.name, 110);
     doc.text(lines, 14, y);
     doc.text(String(v.qty), 130, y);
-    doc.text(fmtPdf(v.qty * v.product.price), 165, y);
+    doc.text(v.product.price ? fmtPdf(v.qty * v.product.price) : 'по запросу', 165, y);
     y += lines.length * 5 + 3;
   });
 
