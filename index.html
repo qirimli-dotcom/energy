@@ -134,15 +134,44 @@
   .card-body{padding:20px 20px 22px; display:flex; flex-direction:column; flex:1;}
   .card h3{font-family:var(--display); font-size:16px; font-weight:600; margin-bottom:3px;}
   .card .sku{font-family:var(--mono); font-size:10px; color:#b8b4a6; margin-bottom:14px;}
-  .specs{display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; padding:14px 0; margin-bottom:14px; border-top:1px dashed var(--line-light); border-bottom:1px dashed var(--line-light);}
-  .spec-label{font-size:10px; color:var(--text-light-soft); text-transform:uppercase; letter-spacing:.03em;}
-  .spec-value{font-family:var(--mono); font-size:13px; font-weight:600; color:var(--text-light); margin-top:2px;}
+  .specs{display:flex; flex-direction:column; gap:8px; padding:14px 0; margin-bottom:14px; border-top:1px dashed var(--line-light); border-bottom:1px dashed var(--line-light);}
+  .spec-row{display:flex; align-items:flex-start; gap:10px;}
+  .spec-icon{width:26px; height:26px; border-radius:50%; border:1px solid var(--line-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--text-light-soft);}
+  .spec-icon svg{width:13px; height:13px;}
+  .spec-label{font-size:12px; color:var(--text-light-soft); min-width:78px; flex-shrink:0; padding-top:2px;}
+  .spec-value{font-family:var(--mono); font-size:13px; font-weight:600; color:var(--text-light); line-height:1.4; padding-top:2px;}
   .card .desc{font-size:12px; color:var(--text-light-soft); line-height:1.5; margin-bottom:16px; flex:1;}
   .price-row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px;}
   .price{font-family:var(--display); font-size:20px; font-weight:700;}
   .price .cur{font-size:13px; color:var(--text-light-soft); font-weight:500;}
   .add-btn{width:100%; background:var(--amber); color:var(--ink); border:none; border-radius:9px; padding:13px; font-size:13.5px; font-weight:700; cursor:pointer; font-family:var(--body); transition:background .2s ease;}
   .add-btn:hover{background:var(--amber-deep);}
+  .detail-btn{width:100%; background:transparent; color:var(--text-light); border:1.5px solid var(--line-light); border-radius:9px; padding:11px; font-size:13px; font-weight:600; cursor:pointer; font-family:var(--body); margin-bottom:8px; transition:background .15s ease, border-color .15s ease;}
+  .detail-btn:hover{background:var(--paper); border-color:var(--text-light-soft);}
+
+  /* DETAIL MODAL */
+  .detail-overlay{display:none; position:fixed; inset:0; background:rgba(20,16,8,.55); z-index:200; align-items:flex-start; justify-content:center; padding:40px 20px; overflow-y:auto;}
+  .detail-overlay.open{display:flex;}
+  .detail-modal{background:var(--paper-card); border-radius:20px; max-width:1100px; width:100%; display:flex; overflow:hidden; position:relative; box-shadow:0 30px 80px -20px rgba(0,0,0,.4);}
+  .detail-close{position:absolute; top:20px; right:20px; width:36px; height:36px; border-radius:50%; border:1px solid var(--line-light); background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; color:var(--text-light-soft); z-index:2;}
+  .detail-close:hover{background:var(--paper);}
+  .detail-img{flex:0 0 44%; background:var(--paper); display:flex; align-items:center; justify-content:center; padding:20px;}
+  .detail-img img{max-width:100%; max-height:420px; object-fit:contain;}
+  .detail-body{flex:1; padding:44px 48px 44px 36px; min-width:0;}
+  .detail-body h2{font-family:var(--display); font-size:28px; font-weight:700; margin-bottom:16px;}
+  .detail-desc{font-size:14.5px; line-height:1.65; color:var(--text-light); margin-bottom:8px; white-space:pre-line;}
+  .detail-specs-title{font-size:15px; font-weight:700; margin:24px 0 14px;}
+  .detail-specs-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+  .detail-specs-grid.cols-2{grid-template-columns:repeat(2,1fr);}
+  .detail-spec-card{background:var(--paper); border-radius:10px; padding:12px 14px;}
+  .detail-spec-card .lbl{font-size:11.5px; color:var(--text-light-soft); margin-bottom:4px;}
+  .detail-spec-card .val{font-family:var(--mono); font-size:14px; font-weight:600; color:var(--text-light);}
+  @media(max-width:760px){
+    .detail-modal{flex-direction:column; border-radius:14px;}
+    .detail-img{flex:none; padding:24px;}
+    .detail-body{padding:24px;}
+    .detail-specs-grid{grid-template-columns:1fr 1fr;}
+  }
   .qty{display:flex; align-items:center; justify-content:space-between; border:1px solid var(--amber); border-radius:9px; overflow:hidden;}
   .qty button{width:38px; height:40px; border:none; background:transparent; color:var(--text-light); font-size:16px; cursor:pointer;}
   .qty button:hover{background:var(--paper);}
@@ -151,8 +180,7 @@
     .grid{gap:14px;}
     .thumb{height:170px;}
     .card-body{padding:16px 16px 18px;}
-    .specs{grid-template-columns:1fr;}
-    .qty button{height:44px;}
+        .qty button{height:44px;}
     .price{font-size:18px;}
   }
 
@@ -252,22 +280,22 @@ const products = [
 {cat:'stations', name:"Pecron E2400LFP", sku:"PEC-E2400-LFP", price:99330, wh:2048, power:"2400 Вт (4000 Вт пиковая)", capacity:"2048 Вт·ч (LiFePO₄)", weight:"20,5 кг", dims:"376 × 236 × 330 мм", desc:"Pecron E2400LFP — это мощная, интеллектуальная электростанция с инвертором 2400 Вт, батареей 2048 Вт·ч (LiFePO₄) и поддержкой Wi-Fi управления. Идеальна для кемпинга, автономного электроснабжения, питания дома и в поездках. Зарядка всего за 1.5 часа, 12 выходов и возможность расширения до 8192 Вт·ч делают эту станцию универсальным решением под любые задачи.", img:"https://pecron.ru/_astro/e2400lfp.yJ0OzUIM.jpg"},
 {cat:'stations', name:"Pecron E2000LFP", sku:"PEC-E2000-LFP", price:94710, wh:1920, power:"2000 Вт (4000 Вт пиковая)", capacity:"1920 Вт·ч (LiFePO₄)", weight:"22 кг", dims:"409 × 256 × 297 мм", desc:"Pecron E2000LFP — это портативная электростанция с мощностью 2000 Вт и ёмкостью 1920 Вт·ч, оснащённая аккумулятором LiFePO₄ с ресурсом более 3500 циклов. Благодаря широкому набору функций и возможности расширения ёмкости до 8064 Вт·ч, она идеально подходит для кемпинга, резервного питания дома и профессионального использования.", img:"https://pecron.ru/_astro/e2000lfp.DewKvhpZ.jpg"},
 {cat:'stations', name:"Pecron E1500LFP", sku:"PEC-E1500-LFP", price:82390, wh:1536, power:"2200 Вт (4400 Вт пиковая)", capacity:"1536 Вт·ч (LiFePO₄)", weight:"18,2 кг", dims:"376 × 239 × 305 мм", desc:"Pecron E1500LFP — это портативная электростанция с мощностью 2200 Вт и ёмкостью 1536 Вт·ч, оснащённая аккумулятором LiFePO₄ с ресурсом более 3500 циклов. Благодаря широкому набору функций и возможности расширения ёмкости до 7680 Вт·ч, она идеально подходит для кемпинга, резервного питания дома и профессионального использования.", img:"https://pecron.ru/_astro/e1500lfp.GDiIadlR.jpg"},
-{cat:'stations', name:"Pecron E1000LFP", sku:"PEC-E1000-LFP", price:60060, wh:1024, power:"1800 Вт (3000 Вт пиковая)", capacity:"1024 Вт·ч (LiFePO₄)", weight:"13,5 кг", dims:"378 × 239 × 254 мм", desc:"Pecron E1000LFP — это портативная электростанция с мощностью 1800 Вт и ёмкостью 1024 Вт·ч, оснащённая аккумулятором LiFePO₄ с ресурсом более 3500 циклов. Благодаря компактному дизайну и широкому набору функций, она идеально подходит для кемпинга, резервного питания дома и профессионального использования.", img:"https://pecron.ru/_astro/e1000lfp.emHp7tP6.jpg"},
-{cat:'stations', name:"Pecron F1000LFP", sku:"PEC-F1000-LFP", price:52360, wh:960, power:"1500 Вт (3000 Вт пиковая)", capacity:"960 Вт·ч (LiFePO₄)", weight:"10,85 кг", dims:"380 × 217 × 214 мм", desc:"Pecron F1000LFP — портативная электростанция для дома, дачи, поездок, работы на выезде и резервного питания техники. Модель выдает до 1500 Вт мощности, имеет емкость 960 Вт·ч и подходит для подключения бытовой электроники, освещения, холодильника, роутера, ноутбука, инструмента и другой техники.", img:"https://pecron.ru/_astro/f1000lfp.y8_0yZPy.jpg"},
+{cat:'stations', name:"Pecron E1000LFP", sku:"PEC-E1000-LFP", price:60060, wh:1024, power:"1800 Вт (3000 Вт пиковая)", capacity:"1024 Вт·ч (LiFePO₄)", weight:"13,5 кг", dims:"378 × 239 × 254 мм", desc:"Pecron E1000LFP — это портативная электростанция с мощностью 1800 Вт и ёмкостью 1024 Вт·ч, оснащённая аккумулятором LiFePO₄ с ресурсом более 3500 циклов. Благодаря компактному дизайну и широкому набору функций, она идеально подходит для кемпинга, резервного питания дома и профессионального использования.\n\nПоддерживает управление через приложение, Wi-Fi и Bluetooth, быструю зарядку от сети примерно за 1,3 часа и подключение солнечных панелей для автономной подзарядки.", detail:{expansion:"до 4096 Вт·ч (с EP3000-48V)", solarCharge:"до 600 Вт", ups:"поддерживается"}, img:"https://pecron.ru/_astro/e1000lfp.emHp7tP6.jpg"},
+{cat:'stations', name:"Pecron F1000LFP", sku:"PEC-F1000-LFP", price:52360, wh:960, power:"1500 Вт (3000 Вт пиковая)", capacity:"960 Вт·ч (LiFePO₄)", weight:"10,85 кг", dims:"380 × 217 × 214 мм", desc:"Pecron F1000LFP — портативная электростанция для дома, дачи, поездок, работы на выезде и резервного питания техники. Модель выдает до 1500 Вт мощности, имеет емкость 960 Вт·ч и подходит для подключения бытовой электроники, освещения, холодильника, роутера, ноутбука, инструмента и другой техники.\n\nМодель сочетает высокую выходную мощность, хороший запас энергии и удобный набор разъёмов. Станцию можно использовать дома при отключении электричества, брать с собой в поездки или подключать к солнечным панелям для автономной зарядки.", detail:{sockets:"3", expansion:"нет", solarCharge:"до 600 Вт", ups:"до 20 мс"}, img:"https://pecron.ru/_astro/f1000lfp.y8_0yZPy.jpg"},
 {cat:'stations', name:"Pecron E800LFP", sku:"PEC-E800-LFP", price:45760, wh:768, power:"1200 Вт (2400 Вт пиковая)", capacity:"768 Вт·ч (LiFePO₄)", weight:"9,5 кг", dims:"298 × 199 × 220 мм", desc:"Pecron E800LFP — мощная портативная электростанция с мощностью 1200 Вт и ёмкостью 768 Вт·ч. Оснащена долговечным LiFePO₄ аккумулятором и множеством выходов для подключения различных устройств. Быстрая зарядка и встроенные розетки делают её идеальным решением для кемпинга, путешествий и резервного питания.", img:"https://pecron.ru/_astro/e800lfp.Bn6-AHBQ.jpg"},
 {cat:'stations', name:"Pecron E600LFP", sku:"PEC-E600-LFP", price:36960, wh:614, power:"1200 Вт (2400 Вт пиковая)", capacity:"614 Вт·ч (LiFePO₄)", weight:"9,4 кг", dims:"297 × 198 × 216 мм", desc:"Pecron E600LFP — компактная, но мощная электростанция с инвертором 1200 Вт (пик 2400 Вт) и надёжным аккумулятором LiFePO₄ на 614 Вт·ч. Она оснащена 10 выходами, беспроводной зарядкой, быстрым зарядом от сети и поддержкой солнечных панелей до 300 Вт. Уникальная особенность — технология Intelligent Buck Drive, позволяющая временно питать устройства до 2000 Вт. Отличное решение для автономного питания в поездках, на даче или при отключении электричества.", img:"https://pecron.ru/_astro/e600lfp.Dazd9vNK.jpg"},
 {cat:'stations', name:"Pecron E500LFP", sku:"PEC-E500-LFP", price:30030, wh:576, power:"600 Вт", capacity:"576 Вт·ч (LiFePO₄)", weight:"6,8 кг", dims:"252 × 170 × 187 мм", desc:"Pecron E500LFP — компактная и мощная портативная электростанция с мощностью 600 Вт и ёмкостью 576 Вт·ч. Оснащена долговечным LiFePO₄ аккумулятором, функцией UPS, управлением через приложение и множеством выходов для подключения различных устройств. Быстрая зарядка и встроенный LED-фонарь делают её идеальным решением для кемпинга, путешествий и резервного питания.", img:"https://pecron.ru/_astro/e500lfp.CoC8rZhV.jpg"},
-{cat:'stations', name:"Pecron E300LFP", sku:"PEC-E300-LFP", price:24640, wh:288, power:"600 Вт", capacity:"288 Вт·ч (LiFePO₄)", weight:"4,8 кг", dims:"254 × 172 × 154 мм", desc:"Pecron E300LFP — компактная и мощная портативная электростанция, созданная для тех, кто ценит автономность, мобильность и надёжность. При весе всего 4.8 кг, она предлагает 600 Вт мощности и ёмкость 288 Вт·ч, что позволяет питать телефоны, ноутбуки, освещение, роутеры, холодильники и даже мелкую бытовую технику.", img:"https://pecron.ru/_astro/e300lfp.CUyk_2xC.jpg"},
+{cat:'stations', name:"Pecron E300LFP", sku:"PEC-E300-LFP", price:24640, wh:288, power:"600 Вт", capacity:"288 Вт·ч (LiFePO₄)", weight:"4,8 кг", dims:"254 × 172 × 154 мм", desc:"Pecron E300LFP — компактная и мощная портативная электростанция, созданная для тех, кто ценит автономность, мобильность и надёжность. При весе всего 4.8 кг, она предлагает 600 Вт мощности и ёмкость 288 Вт·ч, что позволяет питать телефоны, ноутбуки, освещение, роутеры, холодильники и даже мелкую бытовую технику.", detail:{sockets:"1", expansion:"нет", solarCharge:"до 100 Вт", ups:"есть"}, img:"https://pecron.ru/_astro/e300lfp.CUyk_2xC.jpg"},
 
-{cat:'panels', name:"Солнечная панель PECRON PV100", sku:"", price:14190, power:"100 Вт", capacity:"монокристаллическая", weight:"—", dims:"—", desc:"PECRON PV100 100W — высокоэффективная монокристаллическая солнечная панель. Пиковая мощность 105 Вт, эффективность ячеек 22%. Незаменима для путешествий, кемпинга и походов.", img:"https://optim.tildacdn.com/stor6432-6439-4231-b532-313966326665/-/format/webp/93812475.jpg.webp"},
-{cat:'panels', name:"Солнечная панель PECRON PV200", sku:"", price:26180, power:"200 Вт", capacity:"складная, IP67", weight:"—", dims:"—", desc:"PECRON PV200 — мощная и складная солнечная панель на 200 Вт. Прочный водостойкий корпус, совместима с большинством инверторов и портативных электростанций.", img:"https://static.tildacdn.com/stor6432-6439-4231-b532-313966326665/93812475.jpg"},
-{cat:'panels', name:"Солнечная панель PECRON PV300", sku:"", price:38830, power:"300 Вт", capacity:"эффективность до 23%", weight:"—", dims:"—", desc:"PECRON PV300 300W — мощная складная солнечная панель с высокой эффективностью ячеек до 23%. Идеально подходит для кемпинга, путешествий и аварийного энергоснабжения.", img:"https://optim.tildacdn.com/stor6432-6439-4231-b532-313966326665/-/format/webp/93812475.jpg.webp"},
+{cat:'panels', name:"Pecron PV100", sku:"", price:11092, power:"100 Вт", type:"Монокристалл", efficiency:"До 23.4%", protection:"IP67", weight:"—", dims:"—", desc:"PECRON PV100 100W — высокоэффективная монокристаллическая солнечная панель. Пиковая мощность 105 Вт. Незаменима для путешествий, кемпинга и походов.", img:"https://optim.tildacdn.com/stor6432-6439-4231-b532-313966326665/-/format/webp/93812475.jpg.webp"},
+{cat:'panels', name:"Pecron PV200", sku:"", price:22474, power:"200 Вт", type:"Монокристалл", efficiency:"До 23.4%", protection:"IP67", weight:"—", dims:"—", desc:"PECRON PV200 — мощная и складная солнечная панель на 200 Вт. Прочный водостойкий корпус, совместима с большинством инверторов и портативных электростанций.", img:"https://static.tildacdn.com/stor6432-6439-4231-b532-313966326665/93812475.jpg"},
+{cat:'panels', name:"Pecron PV300", sku:"", price:32692, power:"300 Вт", type:"Монокристалл", efficiency:"До 23.4%", protection:"IP67", weight:"—", dims:"—", desc:"PECRON PV300 300W — мощная складная солнечная панель с высокой эффективностью ячеек. Идеально подходит для кемпинга, путешествий и аварийного энергоснабжения.", img:"https://optim.tildacdn.com/stor6432-6439-4231-b532-313966326665/-/format/webp/93812475.jpg.webp"},
 
-{cat:'expansion', name:"Расширение Pecron EP3800", sku:"", price:117810, power:"48V", capacity:"3072 Вт·ч", weight:"—", dims:"—", desc:"PECRON EP3000-48V — модуль расширения ёмкости 3072 Вт·ч для Pecron E1500LFP и E3600LFP. Значительно увеличивает общую ёмкость системы, может использоваться как самостоятельный источник постоянного тока (DC).", img:"https://static.tildacdn.com/stor3666-3637-4263-a463-333862306537/28456291.jpg"},
-{cat:'expansion', name:"Расширение Pecron EB3000", sku:"", price:117810, power:"24V", capacity:"3072 Вт·ч", weight:"—", dims:"—", desc:"PECRON EB3000-24V — батарея-расширение 3072 Вт·ч для Pecron E2000LFP. Значительно увеличивает запас энергии, может использоваться как самостоятельный источник постоянного тока (DC).", img:"https://static.tildacdn.com/stor3666-3637-4263-a463-333862306537/28456291.jpg"},
+{cat:'expansion', name:"Батарея EP3800-48V", sku:"", price:117810, capacity:"3840 Вт·ч", type:"LiFePO4", compat:"E1000, E1500, E2400, E3000, E3600, E3800, F3000", weight:"30 кг", desc:"PECRON EP3800-48V — модуль расширения ёмкости 3840 Вт·ч. Значительно увеличивает общую ёмкость совместимой станции, может использоваться как самостоятельный источник постоянного тока (DC).", img:"https://static.tildacdn.com/stor3666-3637-4263-a463-333862306537/28456291.jpg"},
+{cat:'expansion', name:"Батарея EP3000-24V", sku:"", price:117810, capacity:"3072 Вт·ч", type:"LiFePO4", compat:"E2000", weight:"25 кг", desc:"PECRON EP3000-24V — батарея-расширение 3072 Вт·ч для Pecron E2000LFP. Значительно увеличивает запас энергии, может использоваться как самостоятельный источник постоянного тока (DC).", img:"https://static.tildacdn.com/stor3666-3637-4263-a463-333862306537/28456291.jpg"},
 
-{cat:'accessories', name:"Зарядное устройство PECRON DC1242-500", sku:"", price:16610, power:"до 500 Вт", capacity:"12–30В", weight:"—", dims:"—", desc:"Автомобильное зарядное устройство PECRON DC1242-500 — для зарядки в дороге. Подходит для автомобилей, грузовиков, домов на колёсах. Совместимо с E600LFP, E1000PRO, E1500PRO, E1500LFP, E2000LFP, E3000.", img:"https://s.alicdn.com/@sc04/kf/Acc8be66deecd4a84b2c7f6fbf08adb88V.jpg?avif=close&webp=close"},
-{cat:'accessories', name:"Тележка PECRON Trolley Kit", sku:"", price:6490, power:"—", capacity:"7 кг", weight:"7 кг", dims:"533×152×482 мм", desc:"Тележка PECRON Trolley Kit — удобная транспортировка станций E3600LFP, E2000LFP и E1500LFP. Прочная конструкция и лёгкий вес.", img:"https://optim.tildacdn.com/stor3330-6163-4536-a530-353236613266/-/format/webp/35144134.jpg.webp"},
+{cat:'accessories', name:"Зарядное DC1242-500", sku:"", price:16610, specs:[['Мощность','500 Вт (макс)'],['Вход','12V/24V DC'],['Выход','42V / 11.5A'],['Назначение','Быстрая зарядка в авто']], desc:"Автомобильное зарядное устройство PECRON DC1242-500 — для зарядки в дороге. Подходит для автомобилей, грузовиков, домов на колёсах. Совместимо с E600LFP, E1000PRO, E1500PRO, E1500LFP, E2000LFP, E3000.", img:"https://s.alicdn.com/@sc04/kf/Acc8be66deecd4a84b2c7f6fbf08adb88V.jpg?avif=close&webp=close"},
+{cat:'accessories', name:"Тележка", sku:"", price:6490, specs:[['Назначение','Транспортировка'],['Совместимость','Универсальная'],['Нагрузка','До 100 кг'],['Материал','Сталь']], desc:"Тележка PECRON Trolley Kit — удобная транспортировка портативных станций. Прочная стальная конструкция и лёгкий вес.", img:"https://optim.tildacdn.com/stor3330-6163-4536-a530-353236613266/-/format/webp/35144134.jpg.webp"},
 ];
 
 let cart = {};
@@ -304,9 +332,33 @@ function render(){
   grid.innerHTML = list.map(p => {
     const key = keyFor(p);
     const q = cart[key]?.qty || 0;
-    const specRows = [['Мощность', p.power], ['Ёмкость', p.capacity]];
-    if(p.weight && p.weight !== '—') specRows.push(['Вес', p.weight]);
-    if(p.dims && p.dims !== '—') specRows.push(['Размеры', p.dims]);
+    const specIcons = {
+      'Мощность': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>',
+      'Ёмкость': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/></svg>',
+      'Вес': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 7h11l1.2 13H5.3L6.5 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>',
+      'Размеры': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8 12 14 2 8"/><polyline points="2 14 12 20 22 14"/></svg>',
+      'Тип': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+      'КПД': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12 16 8"/><circle cx="12" cy="12" r="9"/><path d="M8 12a4 4 0 0 1 8 0"/></svg>',
+      'Защита': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 9 4.5-.5 8-4 8-9V5l-8-3z"/></svg>',
+      'Совместимость': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6M15 2v6M7 8h10v4a5 5 0 0 1-10 0V8z"/><path d="M12 17v5"/></svg>',
+      'Вход': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6M15 2v6M7 8h10v4a5 5 0 0 1-10 0V8z"/><path d="M12 17v5"/></svg>',
+      'Выход': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12 16 8"/><circle cx="12" cy="12" r="9"/><path d="M8 12a4 4 0 0 1 8 0"/></svg>',
+      'Назначение': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8 12 14 2 8"/><polyline points="2 14 12 20 22 14"/></svg>',
+      'Нагрузка': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 7h11l1.2 13H5.3L6.5 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>',
+      'Материал': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 9 4.5-.5 8-4 8-9V5l-8-3z"/></svg>'
+    };
+    const specRows = p.cat === 'panels'
+      ? [['Мощность', p.power], ['Тип', p.type], ['КПД', p.efficiency], ['Защита', p.protection]].filter(([,v]) => v && v !== '—')
+      : p.cat === 'expansion'
+      ? [['Ёмкость', p.capacity], ['Тип', p.type], ['Совместимость', p.compat], ['Вес', p.weight]].filter(([,v]) => v && v !== '—')
+      : p.cat === 'accessories'
+      ? (p.specs || []).filter(([,v]) => v && v !== '—')
+      : (() => {
+          const rows = [['Мощность', p.power], ['Ёмкость', p.capacity]];
+          if(p.weight && p.weight !== '—') rows.push(['Вес', p.weight]);
+          if(p.dims && p.dims !== '—') rows.push(['Размеры', p.dims]);
+          return rows;
+        })();
     return `<div class="card">
       <div class="thumb">
         
@@ -316,10 +368,10 @@ function render(){
         <h3>${p.name}</h3>
         ${p.sku ? `<div class="sku">${p.sku}</div>` : `<div class="sku">&nbsp;</div>`}
         <div class="specs">
-          ${specRows.map(([label,val]) => `<div><div class="spec-label">${label}</div><div class="spec-value">${val}</div></div>`).join('')}
+          ${specRows.map(([label,val]) => `<div class="spec-row"><div class="spec-icon">${specIcons[label]||''}</div><div class="spec-label">${label}</div><div class="spec-value">${val}</div></div>`).join('')}
         </div>
-        <p class="desc">${p.desc}</p>
         <div class="price-row"><span class="price">${fmt(p.price)} <span class="cur">₽</span></span></div>
+        <button class="detail-btn" onclick="openDetail('${key.replace(/'/g,"\\'")}')">Подробнее</button>
         ${q === 0
           ? `<button class="add-btn" onclick="addItem('${key.replace(/'/g,"\\'")}')">В заказ</button>`
           : `<div class="qty">
@@ -334,6 +386,66 @@ function render(){
 }
 
 function findProduct(key){ return products.find(p => keyFor(p) === key); }
+
+function openDetail(key){
+  const p = findProduct(key);
+  if(!p) return;
+
+  document.getElementById('detailImg').src = p.img || '';
+  document.getElementById('detailImg').alt = p.name;
+  document.getElementById('detailName').textContent = p.name;
+  document.getElementById('detailDesc').textContent = p.desc || '';
+
+  let rows;
+  if(p.cat === 'panels'){
+    rows = [
+      ['Мощность', p.power || '—'],
+      ['Тип', p.type || '—'],
+      ['КПД', p.efficiency || '—'],
+      ['Защита', p.protection || '—'],
+    ];
+  } else if(p.cat === 'expansion'){
+    rows = [
+      ['Ёмкость', p.capacity || '—'],
+      ['Тип', p.type || '—'],
+      ['Совместимость', p.compat || '—'],
+      ['Вес', p.weight || '—'],
+    ];
+  } else if(p.cat === 'accessories'){
+    rows = (p.specs || []).map(([l,v]) => [l, v || '—']);
+  } else {
+    // основная мощность/пиковая - парсим из строки вида "1500 Вт (3000 Вт пиковая)"
+    let mainPower = p.power || '', peakPower = '';
+    const m = /^(.*?)\s*\((.*?)\s*пиковая\)/.exec(p.power || '');
+    if(m){ mainPower = m[1].trim(); peakPower = m[2].trim(); }
+
+    const d = p.detail || {};
+    rows = [
+      ['Мощность', mainPower || '—'],
+      ['Пиковая мощность', peakPower || '—'],
+      ['Ёмкость', p.capacity || '—'],
+      ['Количество розеток', d.sockets || '—'],
+      ['Расширение ёмкости', d.expansion || '—'],
+      ['Солнечная зарядка', d.solarCharge || '—'],
+      ['Режим ИБП', d.ups || '—'],
+      ['Вес', p.weight || '—'],
+      ['Габариты', p.dims || '—'],
+    ];
+  }
+
+  document.getElementById('detailSpecs').innerHTML = rows.map(([label,val]) =>
+    `<div class="detail-spec-card"><div class="lbl">${label}</div><div class="val">${val}</div></div>`
+  ).join('');
+  document.getElementById('detailSpecs').classList.toggle('cols-2', p.cat === 'panels' || p.cat === 'expansion' || p.cat === 'accessories');
+
+  document.getElementById('detailOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetail(){
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
 
 function addItem(key){
   const p = findProduct(key);
@@ -441,5 +553,17 @@ renderCart();
   onScroll();
 })();
 </script>
+<div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-modal">
+    <button class="detail-close" onclick="closeDetail()">×</button>
+    <div class="detail-img"><img id="detailImg" src="" alt=""></div>
+    <div class="detail-body">
+      <h2 id="detailName"></h2>
+      <div class="detail-desc" id="detailDesc"></div>
+      <div class="detail-specs-title">Ключевые характеристики</div>
+      <div class="detail-specs-grid" id="detailSpecs"></div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
