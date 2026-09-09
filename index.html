@@ -219,7 +219,21 @@ const PECRON_SUPA_KEY = 'sb_publishable_y4WNtj5TyfyAEZE4bluvgg_9i8wxnop';
   .qty{display:flex; align-items:center; justify-content:space-between; border:1px solid var(--amber); border-radius:9px; overflow:hidden;}
   .qty button{width:38px; height:40px; border:none; background:transparent; color:var(--text-light); font-size:16px; cursor:pointer;}
   .qty button:hover{background:var(--paper);}
-  .qty span{font-family:var(--mono); font-size:13.5px; font-weight:600;}
+  .qty span{font-family:var(--mono); font-size:13.5px; font-weight:600; cursor:pointer;}
+  .qtym-overlay{position:fixed; inset:0; background:rgba(10,11,13,.55); backdrop-filter:blur(2px); display:none; align-items:center; justify-content:center; z-index:60; padding:20px;}
+  .qtym-overlay.open{display:flex;}
+  .qtym{background:var(--paper-card); border-radius:16px; width:320px; max-width:100%; padding:22px 22px 20px; box-shadow:0 30px 80px -20px rgba(0,0,0,.4);}
+  .qtym h3{font-family:var(--display); font-size:16px; font-weight:700; margin-bottom:4px;}
+  .qtym .qsub{font-family:var(--mono); font-size:12px; color:var(--text-light-soft); margin-bottom:16px;}
+  .qtym-row{display:flex; align-items:center; gap:10px; margin-bottom:18px;}
+  .qtym-row button{width:46px; height:50px; border:1px solid var(--line-light); background:var(--paper); border-radius:10px; font-size:20px; cursor:pointer; color:var(--text-light); flex:none;}
+  .qtym-row button:hover{border-color:var(--amber);}
+  .qtym-row input{flex:1; width:100%; height:50px; text-align:center; border:1px solid var(--amber); border-radius:10px; font-family:var(--mono); font-size:19px; font-weight:700; outline:none; -moz-appearance:textfield;}
+  .qtym-row input::-webkit-outer-spin-button, .qtym-row input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
+  .qtym-actions{display:flex; gap:10px;}
+  .qtym-actions .add{flex:1; background:var(--amber); color:var(--ink); border:none; border-radius:10px; padding:13px; font-weight:700; font-size:14px; cursor:pointer; font-family:var(--body);}
+  .qtym-actions .add:hover{background:var(--amber-hot);}
+  .qtym-actions .cancel{background:transparent; border:1.5px solid var(--line-light); color:var(--text-light); border-radius:10px; padding:13px 16px; font-weight:600; font-size:13px; cursor:pointer; font-family:var(--body);}
   @media(max-width:640px){
     .grid{gap:14px;}
     .thumb{height:170px;}
@@ -461,10 +475,10 @@ function render(){
         ${p.soon
           ? `<button class="add-btn" disabled style="opacity:.5; cursor:not-allowed">Скоро</button>`
           : q === 0
-          ? `<button class="add-btn" onclick="addItem('${key.replace(/'/g,"\\'")}')">В заказ</button>`
+          ? `<button class="add-btn" onclick="openQty('${key.replace(/'/g,"\\'")}')">В заказ</button>`
           : `<div class="qty">
               <button onclick="changeQty('${key.replace(/'/g,"\\'")}', -1)">−</button>
-              <span>${q} шт</span>
+              <span onclick="openQty('${key.replace(/'/g,"\\'")}')" title="Указать количество">${q} шт</span>
               <button onclick="changeQty('${key.replace(/'/g,"\\'")}', 1)">+</button>
             </div>`
         }
@@ -560,6 +574,39 @@ function changeQty(key, delta){
   render(); renderCart();
 }
 function removeItem(key){ delete cart[key]; render(); renderCart(); }
+
+/* ===== Окно ввода количества ===== */
+let qtyKey = null;
+function openQty(key){
+  const p = findProduct(key);
+  if(!p) return;
+  qtyKey = key;
+  document.getElementById('qtyName').textContent = p.name;
+  document.getElementById('qtySub').textContent = p.sku || '';
+  const inp = document.getElementById('qtyInput');
+  inp.value = cart[key]?.qty || 1;
+  document.getElementById('qtyAddBtn').textContent = cart[key] ? 'Сохранить' : 'Добавить';
+  document.getElementById('qtyOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => { inp.focus(); inp.select(); }, 30);
+}
+function closeQty(){
+  document.getElementById('qtyOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  qtyKey = null;
+}
+function qtyStep(d){
+  const inp = document.getElementById('qtyInput');
+  inp.value = Math.max(1, (parseInt(inp.value) || 1) + d);
+}
+function confirmQty(){
+  if(!qtyKey) return;
+  const p = findProduct(qtyKey);
+  const n = Math.max(1, parseInt(document.getElementById('qtyInput').value) || 1);
+  cart[qtyKey] = { product: p, qty: n };
+  render(); renderCart();
+  closeQty();
+}
 
 function renderCart(){
   const items = Object.entries(cart);
@@ -726,6 +773,21 @@ renderCart();
     <p>Условия сотрудничества ориентированы на B2B-сегмент. Минимальная сумма заказа составляет <b>500 000 ₽</b>.</p>
     <p>Срок производства — ориентировочно до <b>30 календарных дней</b>. Срок доставки по территории России — <b>15–18 дней</b>.</p>
     <p>Цены являются ориентировочными и могут корректироваться в зависимости от объёма заказа, ассортимента и условий поставки. Окончательные коммерческие условия согласовываются индивидуально.</p>
+  </div>
+</div>
+<div class="qtym-overlay" id="qtyOverlay" onclick="if(event.target===this)closeQty()">
+  <div class="qtym">
+    <h3 id="qtyName"></h3>
+    <div class="qsub" id="qtySub"></div>
+    <div class="qtym-row">
+      <button type="button" onclick="qtyStep(-1)">−</button>
+      <input id="qtyInput" type="number" min="1" step="1" value="1" inputmode="numeric" onkeydown="if(event.key==='Enter')confirmQty()">
+      <button type="button" onclick="qtyStep(1)">+</button>
+    </div>
+    <div class="qtym-actions">
+      <button class="cancel" type="button" onclick="closeQty()">Отмена</button>
+      <button class="add" id="qtyAddBtn" type="button" onclick="confirmQty()">Добавить</button>
+    </div>
   </div>
 </div>
 </body>
