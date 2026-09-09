@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Pecron · Панель заказов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--ink:#15181b;--graphite:#20252a;--steel:#eceff1;--panel:#fff;--panel2:#f5f7f8;--line:#dde3e6;--line2:#eaeef0;--muted:#5f6a72;--muted2:#8b959b;--amber:#ff8a3d;--amber2:#e06a1f;--amber-ink:#7a3708;--shadow:0 1px 2px rgba(20,30,35,.05),0 8px 24px rgba(20,30,35,.06);--shadow-lg:0 24px 60px rgba(15,22,28,.28);}
+*{box-sizing:border-box}
+body{margin:0;background:var(--steel);color:var(--ink);font-family:'Inter',system-ui,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono',monospace}
+button{font-family:inherit;cursor:pointer}
+a{color:inherit}
+.brand{display:flex;align-items:center;gap:9px}
+.brand .mark{width:11px;height:20px;background:var(--amber);border-radius:2px;box-shadow:0 0 12px var(--amber)}
+.brand .name{font-family:'Space Grotesk';font-weight:800;letter-spacing:.13em;font-size:16px;text-transform:uppercase;color:#fff}
+.brand .name b{color:var(--amber)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:14px;padding:11px 18px;border-radius:10px;border:1px solid transparent;transition:filter .15s,background .15s,transform .12s}
+.btn:active{transform:translateY(1px)}
+.btn-amber{background:var(--amber);color:var(--ink)}.btn-amber:hover{filter:brightness(1.06)}
+.btn-line{background:var(--panel);border-color:var(--line);color:var(--ink)}.btn-line:hover{border-color:var(--muted2)}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(120% 120% at 80% 0%,#2a3037,#171b1f)}
+.login-card{background:var(--panel);border-radius:16px;box-shadow:var(--shadow-lg);width:360px;max-width:100%;overflow:hidden}
+.login-head{background:var(--graphite);padding:18px 22px;display:flex;align-items:center;justify-content:space-between}
+.login-body{padding:26px 24px 24px}
+.login-body h1{font-family:'Space Grotesk';font-weight:700;font-size:20px;margin:0 0 4px}
+.login-body p{color:var(--muted);margin:0 0 20px;font-size:13px}
+.login-body label{display:block;font-family:'Space Grotesk';font-weight:600;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.login-body input{width:100%;height:44px;border:1px solid var(--line);border-radius:10px;padding:0 14px;font-size:15px;outline:none;transition:border .15s}
+.login-body input:focus{border-color:var(--amber2)}
+.err{color:#c0392b;font-size:13px;margin-top:10px;min-height:16px}
+.app{display:none}
+.topbar{background:var(--graphite);color:#fff;position:sticky;top:0;z-index:20}
+.topbar .in{max-width:1180px;margin:0 auto;padding:0 22px;height:58px;display:flex;align-items:center;justify-content:space-between}
+.topbar .right{display:flex;align-items:center;gap:10px}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 22px 60px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 18px;box-shadow:var(--shadow)}
+.tile .v{font-family:'Space Grotesk';font-weight:700;font-size:24px;line-height:1}
+.tile .k{font-size:12px;color:var(--muted);margin-top:6px}
+.tile.acc{background:linear-gradient(150deg,#ffe9d6,#ffdcbf);border-color:#ffcf9f}.tile.acc .v{color:var(--amber-ink)}
+.toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-family:'Space Grotesk';font-weight:600;font-size:12.5px;letter-spacing:.03em;text-transform:uppercase;padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted)}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip .n{opacity:.5;font-family:'JetBrains Mono';font-size:11px;margin-left:5px}
+.tools{margin-left:auto;display:flex;gap:10px}
+.search{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px 12px}
+.search input{border:0;outline:0;background:none;font-size:14px;width:190px}
+.search svg{color:var(--muted2);flex:none}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--panel2);text-align:left;font-family:'Space Grotesk';font-weight:600;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:12px 16px;border-bottom:1px solid var(--line)}
+tbody td{padding:12px 16px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.c-sum{text-align:right;font-family:'Space Grotesk';font-weight:700}
+.c-marg{text-align:right}
+.c-chev{color:var(--muted2)}
+.order{cursor:pointer;transition:background .12s}
+.order:hover{background:#fafcfc}
+.order.isnew td:first-child{box-shadow:inset 3px 0 0 var(--amber)}
+.oid{font-family:'JetBrains Mono';font-weight:700}
+.sub{font-size:12px;color:var(--muted);margin-top:2px}
+.date{font-size:12px;color:var(--muted)}
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:'Space Grotesk';font-weight:600;font-size:11px;letter-spacing:.03em;text-transform:uppercase;padding:5px 10px;border-radius:7px}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%}
+.badge.new{background:#f0f8c8;color:var(--amber-ink);border:1px solid #e2eeb0}.badge.new::before{background:var(--amber2)}
+.badge.work{background:#fdecc4;color:#8a5b09;border:1px solid #f2dcae}.badge.work::before{background:#e69a1a}
+.badge.avail{background:#d5f2ec;color:#0f6b60;border:1px solid #bce6df}.badge.avail::before{background:#12a394}
+.badge.transit{background:#dbe7fb;color:#1b4b8f;border:1px solid #c6d9f5}.badge.transit::before{background:#2f6fd0}
+.badge.done{background:#c6ebd0;color:#1c6e3f;border:1px solid #a9dcb8}.badge.done::before{background:#2e9e5b}
+.badge.cancel{background:#eceef0;color:#6a7278;border:1px solid #dce0e3}.badge.cancel::before{background:#9aa0a6}
+.detail td{background:var(--panel2);padding:0}
+.det{padding:16px 20px;display:grid;grid-template-columns:1.3fr 1fr;gap:24px}
+.item{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line2);font-size:13px}
+.item:last-of-type{border-bottom:0}
+.item .isub{font-size:11px;color:var(--muted);margin-top:2px}
+.tot{display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:2px solid var(--line);font-family:'Space Grotesk';font-weight:700}
+.side>div{margin-bottom:10px;font-size:14px}
+.side .l{display:block;font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.stsel{font:inherit;border:1px solid var(--line);border-radius:7px;padding:6px 9px;background:#fff;cursor:pointer}
+.disc-inp{width:66px;border:1px solid var(--line);border-radius:7px;padding:5px 8px;font:inherit}
+.det-actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.det-actions .btn{padding:8px 13px;font-size:13px}
+.del{background:#fff;border:1px solid #e0b4ae;color:#c0392b;border-radius:8px;padding:8px 13px;cursor:pointer;font:inherit;font-size:13px}
+.del:hover{background:#fdeceb}
+.margin{border-top:1px solid var(--line);padding:16px 20px;background:#fff}
+.mm-h{font-family:'Space Grotesk';font-weight:700;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.mm-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.mm-t{width:100%;border-collapse:collapse;margin-bottom:12px}
+.mm-t th{background:var(--panel2);text-align:right;font-family:'Space Grotesk';font-weight:600;font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line)}
+.mm-t th.l{text-align:left}
+.mm-t td{padding:8px 10px;border-bottom:1px solid var(--line2);text-align:right;font-family:'JetBrains Mono';font-size:12.5px}
+.mm-t td.l{text-align:left;font-family:'Inter';font-weight:600}
+.mm-inp{width:92px;text-align:right;border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-family:'JetBrains Mono';font-weight:600;font-size:12.5px;outline:none}
+.mm-inp:focus{border-color:var(--amber2);background:#fcfef0}
+.mm-p.pos{color:#1c7a44;font-weight:700}.mm-p.neg{color:#c0392b;font-weight:700}
+.mm-costs{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:12px;font-size:13px;color:var(--muted)}
+.mm-costs label{display:flex;align-items:center;gap:8px}
+.mm-note-l{display:block;font-family:'Space Grotesk';font-weight:600;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:2px 0 6px}
+.mm-note{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 11px;font:inherit;font-size:13px;resize:vertical;outline:none;margin-bottom:12px}
+.mm-note:focus{border-color:var(--amber2)}
+.mm-sum{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:11px 14px;font-size:14px;display:flex;gap:18px;flex-wrap:wrap}
+.mm-sum b{font-family:'JetBrains Mono'}
+.mm-sum .pos,.mm-profit.pos{color:#1c7a44}.mm-sum .neg,.mm-profit.neg{color:#c0392b}
+.empty{padding:48px;text-align:center;color:var(--muted)}
+.logout{background:#333b42;border:0;color:#fff;padding:9px 11px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center}.logout svg{flex:none}.logout:hover{background:#3d454d}
+@media(max-width:640px){
+  .topbar .in{padding:0 14px}.wrap{padding:14px}
+  .tiles{grid-template-columns:1fr 1fr;gap:10px}
+  .tools{width:100%}.search{width:100%}.search input{width:100%}
+  thead{display:none}
+  tbody,tr,tr td{display:block;width:auto}
+  tr.order{padding:14px 16px 12px;border-bottom:1px solid var(--line2);position:relative}
+  tr.order td{border:0!important;padding:0!important;text-align:left!important}
+  tr.order.isnew td:first-child{box-shadow:none}
+  tr.order.isnew{border-left:3px solid var(--amber)}
+  .c-id{font-family:'JetBrains Mono';font-weight:700;font-size:15px;margin-bottom:2px}
+  .c-date{display:block;font-family:'JetBrains Mono';font-size:11.5px;color:var(--muted);margin-bottom:7px}
+  .c-client{margin:2px 0 9px}
+  .c-sum{display:inline-block;font-family:'Space Grotesk';font-weight:800;font-size:18px}
+  .c-marg{display:inline-block;font-family:'JetBrains Mono';font-size:12.5px;margin-left:14px}
+  .c-marg::before{content:attr(data-l)": ";color:var(--muted2);font-weight:400}
+  .c-st{display:inline-block;margin-bottom:10px}
+  .c-chev{display:none}
+  .detail>td{display:block!important}
+  .det{grid-template-columns:1fr;padding:14px 16px}
+  .margin{padding:14px 16px}.mm-t{min-width:440px}
+}
+
+.detail td{background:var(--panel2);padding:0}
+.b-body{display:grid;grid-template-columns:1.25fr 1fr;gap:0}
+.b-left{padding:16px 20px}
+.b-h{font-family:'Space Grotesk';font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.b-row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line2);font-size:13px}
+.b-row:last-of-type{border-bottom:0}
+.b-nm{font-weight:600}
+.b-q{font-family:'JetBrains Mono';color:var(--muted);font-weight:400;margin-left:5px}
+.b-u{display:block;font-family:'JetBrains Mono';font-size:11px;color:var(--muted2);font-weight:400;margin-top:3px}
+.pu-inp{width:88px;border:1px solid var(--line);border-radius:6px;padding:3px 7px;font-family:'JetBrains Mono';font-weight:600;font-size:12px;color:var(--ink);outline:none}
+.pu-inp:focus{border-color:var(--amber2);background:#fcfef0}
+.b-ctl{display:block;font-family:'JetBrains Mono';font-size:11px;color:var(--muted2);font-weight:400;margin-top:4px}
+.qty-inp{width:62px;border:1px solid var(--line);border-radius:6px;padding:3px 7px;font-family:'JetBrains Mono';font-weight:600;font-size:12px;color:var(--ink);outline:none}
+.qty-inp:focus{border-color:var(--amber2);background:#fcfef0}
+.b-right-cell{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.pos-del{width:24px;height:24px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--muted2);cursor:pointer;font-size:12px;line-height:1;flex:none}
+.pos-del:hover{color:#c0392b;border-color:#e0b4ae;background:#fdeceb}
+.b-s{font-family:'Space Grotesk';font-weight:700;white-space:nowrap}
+.b-tot{margin-top:10px;padding-top:10px;border-top:2px solid var(--line)}
+.b-tl{display:flex;justify-content:space-between;font-size:13px;padding:2px 0;color:var(--muted)}
+.b-tl.disc{color:#8a5b09;font-weight:600}
+.b-pay{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-family:'Space Grotesk';font-weight:800;font-size:18px}
+.b-pay span:last-child{color:var(--amber-ink)}
+.b-right{background:#fff;border-left:1px solid var(--line2);padding:16px 20px}
+.edit-inp{width:100%;border:1px solid var(--line);border-radius:7px;padding:7px 10px;font:inherit;font-size:13px;outline:none}
+.edit-inp:focus{border-color:var(--amber2);background:#fcfef0}
+.edit-ta{resize:vertical}
+
+.b-f{margin-bottom:12px}
+.b-l{display:block;font-size:10.5px;color:var(--muted2);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
+.b-v{font-weight:500}
+.b-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+.b-actions{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.b-actions .btn{padding:9px 14px;font-size:13px}
+@media(max-width:640px){ .b-body{grid-template-columns:1fr} .b-right{border-left:0;border-top:1px solid var(--line2);background:var(--panel2)} .b-left,.b-right{padding:14px 16px} }
+
+.filter-dd{position:relative}
+.fdd-btn{display:inline-flex;align-items:center;gap:8px;font-family:'Space Grotesk';font-weight:600;font-size:13px;letter-spacing:.02em;text-transform:uppercase;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
+.fdd-btn svg{color:var(--muted2)}
+.fdd-cur{display:inline-flex;align-items:center;gap:7px}
+.fdd-n{font-family:'JetBrains Mono';font-size:11px;color:#fff;background:var(--muted2);border-radius:9px;min-width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;padding:0 5px}
+.fdd-menu{position:absolute;top:calc(100% + 6px);left:0;min-width:210px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg);padding:6px;display:none;z-index:30}
+.fdd-menu.open{display:block}
+.fdd-item{display:flex;align-items:center;justify-content:space-between;width:100%;font-family:'Space Grotesk';font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.02em;padding:9px 11px;border:0;background:none;border-radius:8px;color:var(--muted);cursor:pointer}
+.fdd-item:hover{background:var(--panel2);color:var(--ink)}
+.fdd-item.on{background:var(--ink);color:#fff}
+.fdd-item.on .fdd-n{background:rgba(255,255,255,.25)}
+
+.topbar .tb-btn{background:transparent;border-color:#454e56;color:#eef2f4;padding:9px 11px}
+.topbar .tb-btn:hover{border-color:#5b6670;background:#2a3138}
+.topbar .tb-btn svg{flex:none}
+.topbar .tb-btn .tb-txt{display:none}
+@media(max-width:640px){
+  .topbar .in{gap:8px}
+  .topbar .right{gap:7px}
+  .topbar .tb-btn{padding:9px 10px}
+  .topbar .tb-btn .tb-txt{display:none}
+  .brand .name{font-size:14px}
+}
+
+.buy-overlay{position:fixed;inset:0;z-index:80;background:rgba(15,20,24,.6);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto}
+.buy-overlay.on{display:flex}
+.buy-modal{background:var(--panel);border-radius:16px;overflow:hidden;box-shadow:var(--shadow-lg);width:720px;max-width:100%;margin:auto}
+.buy-head{background:var(--graphite);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.buy-head .t{font-family:'Space Grotesk';font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:.03em}
+.buy-head .t small{display:block;font-family:'Inter';font-weight:400;font-size:11.5px;color:#aeb8bf;text-transform:none;letter-spacing:0;margin-top:3px}
+.buy-x{background:#333b42;border:0;color:#fff;width:30px;height:30px;border-radius:8px;font-size:15px;cursor:pointer}
+.buy-x:hover{background:var(--amber);color:var(--ink)}
+.buy-body{padding:18px 20px}
+.br-rates{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.br-rate{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:8px 11px}
+.br-rate .l{font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.03em;display:block;margin-bottom:3px}
+.br-rate input{width:82px;border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-family:'JetBrains Mono';font-weight:700;font-size:13px;outline:none}
+.br-rate input:focus{border-color:var(--amber2);background:#fcfef0}
+.br-tip{display:block;font-size:10px;color:var(--muted2);margin-top:4px}
+.br-scroll{overflow-x:auto}
+.br-t{width:100%;border-collapse:collapse;margin-bottom:14px}
+.br-t th{background:var(--panel2);text-align:right;font-family:'Space Grotesk';font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);padding:8px 9px;border-bottom:1px solid var(--line)}
+.br-t th.l{text-align:left}
+.br-t td{padding:8px 9px;border-bottom:1px solid var(--line2);text-align:right;font-family:'JetBrains Mono';font-size:12.5px}
+.br-t td.l{text-align:left;font-family:'Inter';font-weight:600}
+.br-inp{width:78px;text-align:right;border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-family:'JetBrains Mono';font-weight:600;font-size:12px;outline:none}
+.br-inp:focus{border-color:var(--amber2);background:#fcfef0}
+.br-term{width:150px;border:1px solid var(--line);border-radius:6px;padding:5px 8px;font:inherit;font-size:12px;outline:none}
+.br-term:focus{border-color:var(--amber2);background:#fcfef0}
+.br-costs{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:12px;font-size:12.5px;color:var(--muted)}
+.br-costs label{display:flex;align-items:center;gap:7px}
+.br-note-l{display:block;font-family:'Space Grotesk';font-weight:600;font-size:10px;text-transform:uppercase;color:var(--muted);margin:2px 0 5px}
+.br-note{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 11px;font:inherit;font-size:13px;margin-bottom:14px;outline:none}
+.br-note:focus{border-color:var(--amber2)}
+.br-sum{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:14px 16px}
+.br-sr{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px dashed var(--line)}
+.br-sr .k{color:var(--muted)}.br-sr .v{font-family:'JetBrains Mono';font-weight:600}
+.br-sr.h{border-bottom:0;border-top:2px solid var(--line);margin-top:6px;padding-top:12px}
+.br-sr.h .k{font-family:'Space Grotesk';font-weight:700;text-transform:uppercase;font-size:13px;color:var(--ink)}
+.br-sr.h .v{font-family:'Space Grotesk';font-weight:800;font-size:16px}
+.br-marg{margin-top:12px;border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.br-marg.pos{background:var(--amber);color:var(--ink)}.br-marg.neg{background:#ff7a6b;color:#3a0f0a}
+.br-marg .k{font-family:'Space Grotesk';font-weight:700;text-transform:uppercase;font-size:14px}
+.br-marg .mv{text-align:right;line-height:1.15}
+.br-marg .v{font-family:'Space Grotesk';font-weight:800;font-size:19px;display:block}
+.br-marg .vr{font-family:'JetBrains Mono';font-weight:700;font-size:13px;opacity:.85;display:block;margin-top:2px}
+.br-save{margin-top:14px;display:flex;gap:8px;align-items:center}
+.br-saved{color:#1c7a44;font-size:12.5px;font-weight:600}
+.btn-buy{background:var(--graphite);color:#fff;border-color:var(--graphite)}
+.btn-buy:hover{background:#2f363c}
+@media(max-width:640px){ .buy-overlay{padding:10px} .buy-body{padding:14px} .br-t{min-width:520px} }
+</style>
+</head>
+<body>
+
+<div class="login" id="login">
+  <div class="login-card">
+    <div class="login-head"><div class="brand"><span class="mark"></span><span class="name">Pec<b>ron</b></span></div></div>
+    <div class="login-body">
+      <h1>Панель заказов</h1>
+      <p>Вход для администратора</p>
+      <label>Пароль</label>
+      <input id="pass" type="password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autofocus>
+      <button class="btn btn-amber" id="loginBtn" style="width:100%;justify-content:center;margin-top:16px">Войти</button>
+      <div class="err" id="loginErr"></div>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <div class="topbar"><div class="in">
+    <div class="brand"><span class="mark"></span><span class="name">Pec<b>ron</b></span><span id="buyerToggle" title="" style="font-family:'Space Grotesk';font-weight:600;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#c4ccd1;margin-left:8px;cursor:default">&#183; Заказы</span></div>
+    <div class="right"><a class="btn btn-line tb-btn" href="../" title="На сайт" aria-label="На сайт"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg><span class="tb-txt">На сайт</span></a><button class="btn btn-line tb-btn" id="reload" title="Обновить" aria-label="Обновить"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg><span class="tb-txt">Обновить</span></button><button class="logout" id="logout" title="Выйти" aria-label="Выйти"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></button></div>
+  </div></div>
+  <div class="wrap">
+    <div class="tiles" id="tiles"></div>
+    <div class="toolbar">
+      <div class="filter-dd" id="filterDD"></div>
+      <div class="tools"><label class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="search" type="search" placeholder="Поиск по клиенту / №…"></label></div>
+    </div>
+    <div class="card"><table><thead><tr><th>Заказ</th><th class="c-date">Дата</th><th>Клиент</th><th style="text-align:right">Сумма</th><th>Статус</th><th></th></tr></thead><tbody id="rows"></tbody></table><div class="empty" id="empty" style="display:none">Заказов нет.</div></div>
+  </div>
+</div>
+
+<div class="buy-overlay" id="buyOverlay">
+  <div class="buy-modal">
+    <div class="buy-head"><div class="t">Закупка · расчёт<small id="buyMeta"></small></div><button class="buy-x" id="buyX">✕</button></div>
+    <div class="buy-body" id="buyBody"></div>
+  </div>
+</div>
+<script>
+/* ↓↓↓ ВСТАВЬ ДАННЫЕ НОВОГО ПРОЕКТА SUPABASE (Pecron) ↓↓↓ */
+const SUPA_URL = 'https://eftzorvnfxgmjylsgjnd.supabase.co';
+const SUPA_KEY = 'sb_publishable_y4WNtj5TyfyAEZE4bluvgg_9i8wxnop';
+const ADMIN_PASS = 'pecron';       /* ← основной пароль (заказы) — смени! */
+const BUYER_PASS = 'pecron2026';   /* ← пароль закупки (кнопки «Закупка») — смени! */
+/* ↑↑↑ те же URL и KEY нужно вставить в index.html витрины ↑↑↑ */
+let buyerOn = false;
+const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+const ST = {new:'Новый', work:'В работе', avail:'Доступно к заказу', transit:'В пути', done:'Выдан', cancel:'Отменён'};
+const fmtN = n => Number(n||0).toLocaleString('ru-RU');
+function esc(v){ return String(v==null?"":v).replace(/"/g,"&quot;"); }
+let ORDERS = [], filter='all', q='', openId=null;
+
+const Store = {
+  async list(){ const r=await sb.from('orders').select('*').order('created_at',{ascending:false}); if(r.error)throw r.error; return r.data||[]; },
+  async setStatus(id,status){ await sb.from('orders').update({status}).eq('id',id); },
+  async setDiscount(id,discount){ await sb.from('orders').update({discount}).eq('id',id); },
+  async setField(id,patch){ await sb.from('orders').update(patch).eq('id',id); },
+  async setBuy(id,patch){ await sb.from('orders').update(patch).eq('id',id); },
+  async setItems(id,items,total){ await sb.from('orders').update({items,total}).eq('id',id); },
+  async remove(id){ await sb.from('orders').delete().eq('id',id); }
+};
+
+function base(o){ return o.total || (o.items||[]).reduce((s,it)=>s+it[1]*it[2],0); }
+function final(o){ return Math.round(base(o)*(1-(o.discount||0)/100)); }
+function oRate(o){ return (o && o.rate>0)?o.rate:12.5; }
+function cogs(o){ const buy=Array.isArray(o.buy)?o.buy:[]; const r=oRate(o); let c=0; (o.items||[]).forEach((it,i)=>c+=(buy[i]||0)*r*it[1]); return c; }
+function profit(o){ return final(o)-cogs(o)-((o.logi||0)+(o.other||0)); }
+function marginPct(o){ const buy=Array.isArray(o.buy)?o.buy:[]; if(!buy.length||!buy.some(b=>b>0))return null; const rev=final(o); return rev>0?(profit(o)/rev*100):0; }
+function marginCell(o){ const m=marginPct(o); if(m===null)return '<span style="color:#c6ccd0">—</span>'; return '<b style="color:'+(m>=0?'#1c7a44':'#c0392b')+'">'+m.toFixed(0)+'%</b>'; }
+function dt(o){ const d=new Date(o.created_at||Date.now()); const z=n=>('0'+n).slice(-2); return z(d.getDate())+'.'+z(d.getMonth()+1)+' '+z(d.getHours())+':'+z(d.getMinutes()); }
+
+function counts(){ const c={all:ORDERS.length,new:0,work:0,avail:0,transit:0,done:0,cancel:0}; ORDERS.forEach(o=>{if(c[o.status]!==undefined)c[o.status]++;}); return c; }
+function render(){
+  const c=counts(), rev=ORDERS.reduce((s,o)=>s+final(o),0);
+  document.getElementById('tiles').innerHTML =
+    '<div class="tile acc"><div class="v">'+c.new+'</div><div class="k">новых заказов</div></div>'+
+    '<div class="tile"><div class="v">'+ORDERS.length+'</div><div class="k">всего</div></div>'+
+    '<div class="tile"><div class="v">'+fmtN(rev)+' ₽</div><div class="k">на сумму</div></div>';
+  const defs=[['all','Все'],['new','Новые'],['work','В работе'],['avail','Доступно'],['transit','В пути'],['done','Выданы'],['cancel','Отменены']];
+  const cur=defs.find(d=>d[0]===filter)||defs[0];
+  document.getElementById('filterDD').innerHTML=
+    '<button class="fdd-btn" id="fddBtn"><span class="fdd-cur">'+cur[1]+'<span class="fdd-n">'+c[cur[0]]+'</span></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></button>'+
+    '<div class="fdd-menu" id="fddMenu">'+defs.map(d=>'<button class="fdd-item'+(d[0]===filter?' on':'')+'" data-f="'+d[0]+'">'+d[1]+'<span class="fdd-n">'+c[d[0]]+'</span></button>').join('')+'</div>';
+  const btn=document.getElementById('fddBtn'), menu=document.getElementById('fddMenu');
+  btn.onclick=e=>{ e.stopPropagation(); menu.classList.toggle('open'); };
+  menu.querySelectorAll('.fdd-item').forEach(b=>b.onclick=()=>{ filter=b.dataset.f; render(); });
+  let list=ORDERS.filter(o=>filter==='all'||o.status===filter);
+  if(q){const t=q.toLowerCase();list=list.filter(o=>((o.name||'')+' '+(o.company||'')+' '+o.id+' '+(o.phone||'')).toLowerCase().includes(t));}
+  const body=document.getElementById('rows');
+  document.getElementById('empty').style.display=list.length?'none':'block';
+  body.innerHTML=list.map(row).join('');
+  body.querySelectorAll('.order').forEach(tr=>tr.onclick=e=>{ if(e.target.closest('select,a,button,input,textarea'))return; openId=openId===tr.dataset.id?null:tr.dataset.id; render(); });
+  body.querySelectorAll('.stsel').forEach(sel=>sel.onchange=async e=>{ e.stopPropagation(); await Store.setStatus(sel.dataset.id,sel.value); const o=ORDERS.find(x=>String(x.id)===sel.dataset.id); if(o)o.status=sel.value; render(); });
+  body.querySelectorAll('.disc-inp').forEach(inp=>{ inp.onclick=e=>e.stopPropagation(); inp.onchange=async e=>{ e.stopPropagation(); let v=Math.max(0,Math.min(100,parseInt(inp.value)||0)); await Store.setDiscount(inp.dataset.id,v); const o=ORDERS.find(x=>String(x.id)===inp.dataset.id); if(o)o.discount=v; render(); }; });
+  body.querySelectorAll('.edit-inp').forEach(inp=>{
+    inp.onclick=e=>e.stopPropagation();
+    inp.onchange=async e=>{ e.stopPropagation(); const o=ORDERS.find(x=>String(x.id)===inp.dataset.id); if(!o)return; const f=inp.dataset.f; const v=inp.value; o[f]=v; try{ await Store.setField(o.id,{[f]:v}); }catch(err){} };
+  });
+  body.querySelectorAll('.pu-inp').forEach(inp=>{
+    inp.onclick=e=>e.stopPropagation();
+    inp.oninput=e=>{ e.stopPropagation(); const o=ORDERS.find(x=>String(x.id)===inp.dataset.id); if(!o)return; const i=+inp.dataset.i; const p=Math.max(0,parseFloat(inp.value)||0); const el=document.getElementById('pr-sum-'+inp.dataset.id+'-'+i); if(el)el.textContent=fmtN(o.items[i][1]*p)+' ₽'; };
+    inp.onchange=async e=>{ e.stopPropagation(); const o=ORDERS.find(x=>String(x.id)===inp.dataset.id); if(!o)return; const i=+inp.dataset.i; const p=Math.max(0,parseFloat(inp.value)||0); o.items[i][2]=p; o.total=(o.items||[]).reduce((s,it)=>s+it[1]*it[2],0); await Store.setItems(o.id,o.items,o.total); render(); };
+  });
+  body.querySelectorAll('.qty-inp').forEach(inp=>{
+    inp.onclick=e=>e.stopPropagation();
+    inp.oninput=e=>{ e.stopPropagation(); const o=ORDERS.find(x=>String(x.id)===inp.dataset.id); if(!o)return; const i=+inp.dataset.i; const q=Math.max(1,parseInt(inp.value)||1); const el=document.getElementById('pr-sum-'+inp.dataset.id+'-'+i); if(el)el.textContent=fmtN(q*o.items[i][2])+' ₽'; };
+    inp.onchange=async e=>{ e.stopPropagation(); const o=ORDERS.find(x=>String(x.id)===inp.dataset.id); if(!o)return; const i=+inp.dataset.i; const q=Math.max(1,parseInt(inp.value)||1); o.items[i][1]=q; o.total=(o.items||[]).reduce((s,it)=>s+it[1]*it[2],0); await Store.setItems(o.id,o.items,o.total); render(); };
+  });
+  body.querySelectorAll('.pos-del').forEach(b=>b.onclick=async e=>{
+    e.stopPropagation(); const o=ORDERS.find(x=>String(x.id)===b.dataset.id); if(!o)return; const i=+b.dataset.i;
+    if(!confirm('Убрать позицию «'+o.items[i][0]+'» из заказа?')) return;
+    o.items=o.items.filter((_,idx)=>idx!==i);
+    o.total=(o.items||[]).reduce((s,it)=>s+it[1]*it[2],0);
+    await Store.setItems(o.id,o.items,o.total); render();
+  });
+  body.querySelectorAll('.del').forEach(b=>b.onclick=async e=>{ e.stopPropagation(); if(!confirm('Удалить заказ #'+b.dataset.id+'? Действие необратимо.'))return; await Store.remove(b.dataset.id); ORDERS=ORDERS.filter(o=>String(o.id)!==b.dataset.id); openId=null; render(); });
+  body.querySelectorAll('.btn-buy').forEach(b=>b.onclick=e=>{ e.stopPropagation(); openBuy(b.dataset.id); });
+}
+function row(o){
+  const open=openId===String(o.id);
+  const main='<tr class="order '+(o.status==='new'?'isnew':'')+'" data-id="'+o.id+'">'+
+    '<td class="c-id mono">#'+o.id+'</td>'+
+    '<td class="c-date mono">'+dt(o)+'</td>'+
+    '<td class="c-client"><b>'+(o.name||'—')+'</b><div class="sub">'+(o.company||'')+' · '+(o.phone||'')+'</div></td>'+
+    '<td class="c-sum" data-l="Сумма">'+fmtN(final(o))+' ₽</td>'+
+    '<td class="c-st"><span class="badge '+o.status+'">'+(ST[o.status]||o.status)+'</span></td>'+
+    '<td class="c-chev">›</td></tr>';
+  if(!open) return main;
+  const rows=(o.items||[]).map((it,i)=>'<div class="b-row">'+
+    '<span class="b-nm">'+it[0]+
+      '<span class="b-ctl">Кол-во: <input class="qty-inp" data-id="'+o.id+'" data-i="'+i+'" type="number" min="1" value="'+it[1]+'"> шт'+
+      '  ·  Цена/шт: <input class="pu-inp" data-id="'+o.id+'" data-i="'+i+'" type="number" min="0" value="'+it[2]+'"> ₽</span>'+
+    '</span>'+
+    '<span class="b-right-cell"><span class="b-s mono" id="pr-sum-'+o.id+'-'+i+'">'+fmtN(it[1]*it[2])+' ₽</span>'+
+      '<button class="pos-del" data-id="'+o.id+'" data-i="'+i+'" title="Удалить позицию" aria-label="Удалить позицию">✕</button></span>'+
+  '</div>').join('');
+  const bs=base(o), disc=o.discount||0, fin=final(o);
+  const tot='<div class="b-tot">'+
+    (disc>0?'<div class="b-tl"><span>Сумма</span><span class="mono">'+fmtN(bs)+' ₽</span></div><div class="b-tl disc"><span>Скидка '+disc+'%</span><span class="mono">−'+fmtN(bs-fin)+' ₽</span></div>':'')+
+    '<div class="b-pay"><span>К оплате</span><span>'+fmtN(fin)+' ₽</span></div></div>';
+  const sel='<select class="stsel" data-id="'+o.id+'">'+Object.keys(ST).map(x=>'<option value="'+x+'" '+(x===o.status?'selected':'')+'>'+ST[x]+'</option>').join('')+'</select>';
+  const tel=(o.phone||'').replace(/[^0-9+]/g,'');
+  const kp=kpMail(o);
+  return main+'<tr class="detail"><td colspan="6"><div class="b-body">'+
+    '<div class="b-left"><div class="b-h">Состав заказа</div>'+rows+tot+'</div>'+
+    '<div class="b-right">'+
+      '<div class="b-f"><span class="b-l">Телефон</span><a class="b-v mono" href="tel:'+tel+'">'+(o.phone||'—')+'</a></div>'+
+      '<div class="b-f"><span class="b-l">Компания</span><span class="b-v">'+(o.company||'—')+'</span></div>'+
+      '<div class="b-f"><span class="b-l">Комментарий клиента</span><textarea class="edit-inp edit-ta" data-id="'+o.id+'" data-f="comment" rows="2" placeholder="Заметка по клиенту…">'+esc(o.comment)+'</textarea></div>'+
+      '<div class="b-grid"><div class="b-f"><span class="b-l">Скидка</span><span><input class="disc-inp" data-id="'+o.id+'" type="number" min="0" max="100" value="'+disc+'"> %</span></div>'+
+      '<div class="b-f"><span class="b-l">Статус</span>'+sel+'</div></div>'+
+      '<div class="b-actions">'+(buyerOn?'<button class="btn btn-buy" data-id="'+o.id+'">Закупка</button>':'')+'<a class="btn btn-line" href="'+kp+'">Отправить КП</a><button class="del" data-id="'+o.id+'">Удалить</button></div>'+
+    '</div>'+
+  '</div></td></tr>';
+}
+function kpMail(o){
+  const lines=(o.items||[]).map((it,i)=>(i+1)+'. '+it[0]+' — '+it[1]+' шт × '+fmtN(it[2])+' ₽ = '+fmtN(it[1]*it[2])+' ₽').join('\n');
+  const bs=base(o), disc=o.discount||0, fin=final(o);
+  let body='Коммерческое предложение Pecron\n\nДля: '+(o.company||o.name||'')+'\n\n'+lines+'\n\nСумма: '+fmtN(bs)+' ₽';
+  body += disc>0 ? ('\nСкидка '+disc+'%: −'+fmtN(bs-fin)+' ₽\nИтого к оплате: '+fmtN(fin)+' ₽') : ('\nИтого: '+fmtN(fin)+' ₽');
+  body += '\n\nС уважением, Pecron';
+  return 'mailto:?subject='+encodeURIComponent('Коммерческое предложение Pecron')+'&body='+encodeURIComponent(body);
+}
+
+
+
+/* ============ ЗАКУПКА / РАСЧЁТ МАРЖИ ============ */
+let buyId = null;
+function num(v,d){ const n=parseFloat(v); return isNaN(n)?(d||0):n; }
+function openBuy(id){
+  const o = ORDERS.find(x=>String(x.id)===String(id)); if(!o) return;
+  buyId = String(id);
+  document.getElementById('buyMeta').textContent = 'Заказ #'+o.id+' · '+(o.company||o.name||'')+' · '+fmtN(base(o))+' ₽';
+  const items = o.items||[];
+  const buyUsd = Array.isArray(o.buy_cny)?o.buy_cny:[];  // храним в том же поле, теперь это USD
+  const wts = Array.isArray(o.weights)?o.weights:[];
+  const trm = Array.isArray(o.terms)?o.terms:[];
+  const rows = items.map((it,i)=>'<tr>'+
+    '<td class="l">'+it[0]+'</td><td>'+it[1]+'</td>'+
+    '<td><input class="br-inp" data-k="cny" data-i="'+i+'" type="number" min="0" step="0.01" value="'+(buyUsd[i]||0)+'"></td>'+
+    '<td id="br-scny-'+i+'">—</td>'+
+    '<td><input class="br-inp" data-k="w" data-i="'+i+'" type="number" min="0" step="0.01" value="'+(wts[i]||0)+'"></td>'+
+    '<td id="br-tw-'+i+'">—</td>'+
+    '<td class="l"><input class="br-term" data-k="term" data-i="'+i+'" type="text" placeholder="сток / до 16 янв" value="'+((trm[i]||'').replace(/"/g,'&quot;'))+'"></td></tr>').join('');
+  document.getElementById('buyBody').innerHTML =
+    '<div class="br-rates">'+
+      
+      '<div class="br-rate"><span class="l">Курс USD, ₽</span><input id="br-rrub" type="number" step="0.01" value="'+(o.rate_rub>0?o.rate_rub:90)+'"><span class="br-tip">сколько ₽ за 1 $</span></div>'+
+      '<div class="br-rate"><span class="l">Тариф логистики, $/кг</span><input id="br-tariff" type="number" step="0.01" value="'+(o.logi_tariff||0)+'"></div>'+
+    '</div>'+
+    '<div class="br-scroll"><table class="br-t"><thead><tr><th class="l">Наименование</th><th>Кол-во</th><th>Цена USD/шт</th><th>Сумма USD</th><th>Вес/шт, кг</th><th>Общий вес</th><th class="l">Срок производства</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+    '<div class="br-costs"><label>Иные расходы, $ <input class="br-inp" id="br-other" type="number" min="0" step="0.01" value="'+(o.other_usd||0)+'"></label></div>'+
+    '<span class="br-note-l">Комментарий к закупке</span><textarea class="br-note" id="br-note" rows="2" placeholder="Поставщик, сток, сроки, трек…">'+(o.pcomment||'')+'</textarea>'+
+    '<div class="br-sum">'+
+      '<div class="br-sr"><span class="k">Закупка (товар), USD</span><span class="v" id="br-sumusd">—</span></div>'+
+      '<div class="br-sr"><span class="k">Итого вес</span><span class="v" id="br-weight">—</span></div>'+
+      '<div class="br-sr"><span class="k">Логистика, USD</span><span class="v" id="br-logi">—</span></div>'+
+      '<div class="br-sr"><span class="k">Иные расходы, USD</span><span class="v" id="br-otherusd">—</span></div>'+
+      '<div class="br-sr h"><span class="k">Себестоимость, USD</span><span class="v" id="br-cost">—</span></div>'+
+      '<div class="br-sr"><span class="k">Себестоимость, ₽ (по курсу)</span><span class="v" id="br-costrub">—</span></div>'+
+      '<div class="br-sr"><span class="k">Сумма заказа, USD (по курсу)</span><span class="v" id="br-orderusd">—</span></div>'+
+      '<div class="br-sr"><span class="k">Сумма заказа, ₽</span><span class="v" id="br-orderrub">—</span></div>'+
+      '<div class="br-marg pos" id="br-marg"><span class="k">Маржа</span><span class="mv"><span class="v" id="br-margv">—</span><span class="vr" id="br-margrub">—</span></span></div>'+
+    '</div>'+
+    '<div class="br-save"><button class="btn btn-amber" id="br-savebtn">Сохранить</button><button class="btn btn-line" id="br-closebtn">Закрыть</button><span class="br-saved" id="br-savedmsg"></span></div>';
+  // wire inputs
+  document.querySelectorAll('#buyBody input, #buyBody textarea').forEach(el=>el.addEventListener('input',buyCalc));
+  document.getElementById('br-savebtn').onclick=buySave;
+  document.getElementById('br-closebtn').onclick=closeBuy;
+  buyCalc();
+  document.getElementById('buyOverlay').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeBuy(){ document.getElementById('buyOverlay').classList.remove('on'); document.body.style.overflow=''; buyId=null; }
+function buyCalc(){
+  const o = ORDERS.find(x=>String(x.id)===String(buyId)); if(!o) return;
+  const items = o.items||[];
+  const rrub = num(document.getElementById('br-rrub').value,0);   // ₽ за 1 $
+  const tariff = num(document.getElementById('br-tariff').value,0);
+  const other = num(document.getElementById('br-other').value,0);
+  let sumUsd=0, weight=0;
+  const usd0 = n => (Math.round(n)).toLocaleString('ru-RU')+' $';
+  items.forEach((it,i)=>{
+    const pu = num(document.querySelector('.br-inp[data-k="cny"][data-i="'+i+'"]').value,0);
+    const w  = num(document.querySelector('.br-inp[data-k="w"][data-i="'+i+'"]').value,0);
+    const su = pu*it[1]; const tw = w*it[1];
+    sumUsd += su; weight += tw;
+    document.getElementById('br-scny-'+i).textContent = usd0(su);
+    document.getElementById('br-tw-'+i).textContent = (Math.round(tw*100)/100)+' кг';
+  });
+  const logi = tariff*weight;
+  const cost = sumUsd + logi + other;
+  const orderUsd = rrub>0 ? base(o)/rrub : 0;
+  const marg = orderUsd - cost;
+  const margp = orderUsd>0 ? (marg/orderUsd*100) : 0;
+  const usd = n => (Math.round(n)).toLocaleString('ru-RU')+' $';
+  document.getElementById('br-sumusd').textContent = usd(sumUsd);
+  document.getElementById('br-weight').textContent = (Math.round(weight*100)/100)+' кг';
+  document.getElementById('br-logi').textContent = usd(logi);
+  document.getElementById('br-otherusd').textContent = usd(other);
+  document.getElementById('br-cost').textContent = usd(cost);
+  document.getElementById('br-costrub').textContent = fmtN(Math.round(cost*rrub))+' ₽';
+  document.getElementById('br-orderusd').textContent = usd(orderUsd);
+  document.getElementById('br-margv').textContent = (marg>=0?'+':'')+usd(marg)+' · '+margp.toFixed(1)+' %';
+  document.getElementById('br-orderrub').textContent = fmtN(Math.round(base(o)))+' ₽';
+  const margRub = marg*rrub;
+  document.getElementById('br-margrub').textContent = (margRub>=0?'+':'')+fmtN(Math.round(margRub))+' ₽';
+  document.getElementById('br-marg').className = 'br-marg '+(marg>=0?'pos':'neg');
+  const sv=document.getElementById('br-savedmsg'); if(sv) sv.textContent='';
+}
+async function buySave(){
+  const o = ORDERS.find(x=>String(x.id)===String(buyId)); if(!o) return;
+  const items = o.items||[];
+  const buy_cny = items.map((it,i)=>num(document.querySelector('.br-inp[data-k="cny"][data-i="'+i+'"]').value,0));
+  const weights = items.map((it,i)=>num(document.querySelector('.br-inp[data-k="w"][data-i="'+i+'"]').value,0));
+  const terms = items.map((it,i)=>{ const el=document.querySelector('.br-term[data-i="'+i+'"]'); return el?el.value:''; });
+  const patch = {
+    buy_cny, weights, terms,
+    rate_rub: num(document.getElementById('br-rrub').value,0),
+    logi_tariff: num(document.getElementById('br-tariff').value,0),
+    other_usd: num(document.getElementById('br-other').value,0),
+    pcomment: document.getElementById('br-note').value
+  };
+  Object.assign(o, patch);
+  const btn=document.getElementById('br-savebtn'); btn.disabled=true; btn.textContent='Сохраняем…';
+  try{ await Store.setBuy(o.id, patch); document.getElementById('br-savedmsg').textContent='Сохранено ✓'; }
+  catch(e){ document.getElementById('br-savedmsg').textContent='Ошибка: '+(e.message||e); }
+  btn.disabled=false; btn.textContent='Сохранить';
+}
+(function wireBuy(){
+  const x=document.getElementById('buyX'); if(x) x.onclick=closeBuy;
+  const ov=document.getElementById('buyOverlay'); if(ov) ov.addEventListener('click',e=>{ if(e.target.id==='buyOverlay') closeBuy(); });
+})();
+
+async function load(){ try{ ORDERS=await Store.list(); render(); }catch(e){ document.getElementById('rows').innerHTML='<tr><td colspan="6" style="padding:40px;color:#c0392b">Ошибка загрузки: '+(e.message||e)+'</td></tr>'; } }
+
+function doLogin(){
+  if(document.getElementById('pass').value===ADMIN_PASS){
+    document.getElementById('login').style.display='none';
+    document.getElementById('app').style.display='block';
+    load();
+    try{ sb.channel('orders-rt').on('postgres_changes',{event:'*',schema:'public',table:'orders'},()=>load()).subscribe(); }catch(e){}
+  } else { document.getElementById('loginErr').textContent='Неверный пароль'; }
+}
+document.getElementById('loginBtn').onclick=doLogin;
+document.getElementById('pass').addEventListener('keydown',e=>{ if(e.key==='Enter')doLogin(); });
+document.getElementById('logout').onclick=()=>{ document.getElementById('app').style.display='none'; document.getElementById('login').style.display='flex'; document.getElementById('pass').value=''; };
+document.getElementById('reload').onclick=load;
+(function(){
+  const t=document.getElementById('buyerToggle'); if(!t) return;
+  t.addEventListener('dblclick',function(){
+    if(buyerOn){ buyerOn=false; render(); return; }
+    const pw=prompt('Пароль закупки:'); if(pw===null) return;
+    if(pw===BUYER_PASS){ buyerOn=true; render(); } else { alert('Неверный пароль закупки'); }
+  });
+})();
+document.getElementById('search').addEventListener('input',e=>{q=e.target.value;render();});
+document.addEventListener('click',()=>{const m=document.getElementById('fddMenu'); if(m)m.classList.remove('open');});
+</script>
+</body>
+</html>
