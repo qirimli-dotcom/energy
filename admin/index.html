@@ -292,6 +292,8 @@ const ST = {new:'Новый', work:'В работе', avail:'Доступно к
 const fmtN = n => Number(n||0).toLocaleString('ru-RU');
 function esc(v){ return String(v==null?"":v).replace(/"/g,"&quot;"); }
 let ORDERS = [], filter='all', q='', openId=null;
+let NO={};                                   // сквозные номера: реальный id -> порядковый №
+function dispNo(o){ return NO[String(o.id)] || o.id; }
 
 const Store = {
   async list(){ const r=await sb.from('orders').select('*').order('created_at',{ascending:false}); if(r.error)throw r.error; return r.data||[]; },
@@ -314,6 +316,7 @@ function dt(o){ const d=new Date(o.created_at||Date.now()); const z=n=>('0'+n).s
 
 function counts(){ const c={all:ORDERS.length,new:0,work:0,avail:0,transit:0,done:0,cancel:0}; ORDERS.forEach(o=>{if(c[o.status]!==undefined)c[o.status]++;}); return c; }
 function render(){
+  NO={}; [...ORDERS].sort((a,b)=>a.id-b.id).forEach((o,i)=>{ NO[String(o.id)]=i+1; }); // 1..N по порядку создания, без дыр
   const c=counts(), rev=ORDERS.reduce((s,o)=>s+final(o),0);
   document.getElementById('tiles').innerHTML =
     '<div class="tile acc"><div class="v">'+c.new+'</div><div class="k">новых заказов</div></div>'+
@@ -328,7 +331,7 @@ function render(){
   btn.onclick=e=>{ e.stopPropagation(); menu.classList.toggle('open'); };
   menu.querySelectorAll('.fdd-item').forEach(b=>b.onclick=()=>{ filter=b.dataset.f; render(); });
   let list=ORDERS.filter(o=>filter==='all'||o.status===filter);
-  if(q){const t=q.toLowerCase();list=list.filter(o=>((o.name||'')+' '+(o.company||'')+' '+o.id+' '+(o.phone||'')).toLowerCase().includes(t));}
+  if(q){const t=q.toLowerCase();list=list.filter(o=>((o.name||'')+' '+(o.company||'')+' '+o.id+' '+dispNo(o)+' '+(o.phone||'')).toLowerCase().includes(t));}
   const body=document.getElementById('rows');
   document.getElementById('empty').style.display=list.length?'none':'block';
   body.innerHTML=list.map(row).join('');
@@ -356,13 +359,13 @@ function render(){
     o.total=(o.items||[]).reduce((s,it)=>s+it[1]*it[2],0);
     await Store.setItems(o.id,o.items,o.total); render();
   });
-  body.querySelectorAll('.del').forEach(b=>b.onclick=async e=>{ e.stopPropagation(); if(!confirm('Удалить заказ #'+b.dataset.id+'? Действие необратимо.'))return; await Store.remove(b.dataset.id); ORDERS=ORDERS.filter(o=>String(o.id)!==b.dataset.id); openId=null; render(); });
+  body.querySelectorAll('.del').forEach(b=>b.onclick=async e=>{ e.stopPropagation(); if(!confirm('Удалить заказ #'+(NO[b.dataset.id]||b.dataset.id)+'? Действие необратимо.'))return; await Store.remove(b.dataset.id); ORDERS=ORDERS.filter(o=>String(o.id)!==b.dataset.id); openId=null; render(); });
   body.querySelectorAll('.btn-buy').forEach(b=>b.onclick=e=>{ e.stopPropagation(); openBuy(b.dataset.id); });
 }
 function row(o){
   const open=openId===String(o.id);
   const main='<tr class="order '+(o.status==='new'?'isnew':'')+'" data-id="'+o.id+'">'+
-    '<td class="c-id mono">#'+o.id+'</td>'+
+    '<td class="c-id mono">#'+dispNo(o)+'</td>'+
     '<td class="c-date mono">'+dt(o)+'</td>'+
     '<td class="c-client"><b>'+(o.name||'—')+'</b><div class="sub">'+(o.company||'')+' · '+(o.phone||'')+'</div></td>'+
     '<td class="c-sum" data-l="Сумма">'+fmtN(final(o))+' ₽</td>'+
@@ -413,7 +416,7 @@ function num(v,d){ const n=parseFloat(v); return isNaN(n)?(d||0):n; }
 function openBuy(id){
   const o = ORDERS.find(x=>String(x.id)===String(id)); if(!o) return;
   buyId = String(id);
-  document.getElementById('buyMeta').textContent = 'Заказ #'+o.id+' · '+(o.company||o.name||'')+' · '+fmtN(base(o))+' ₽';
+  document.getElementById('buyMeta').textContent = 'Заказ #'+dispNo(o)+' · '+(o.company||o.name||'')+' · '+fmtN(base(o))+' ₽';
   const items = o.items||[];
   const buyUsd = Array.isArray(o.buy_cny)?o.buy_cny:[];  // храним в том же поле, теперь это USD
   const wts = Array.isArray(o.weights)?o.weights:[];
