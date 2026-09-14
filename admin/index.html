@@ -206,6 +206,15 @@ tbody td{padding:12px 16px;border-bottom:1px solid var(--line2);vertical-align:m
 .br-rate .l{font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.03em;display:block;margin-bottom:3px}
 .br-rate input{width:82px;border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-family:'JetBrains Mono';font-weight:700;font-size:13px;outline:none}
 .br-rate input:focus{border-color:var(--amber2);background:#fcfef0}
+.br-docs{flex:1;min-width:230px}
+.br-files{display:flex;flex-direction:column;gap:5px;margin:4px 0 8px}
+.br-file{display:flex;align-items:center;gap:7px;font-size:12px;background:#fff;border:1px solid var(--line);border-radius:7px;padding:5px 8px}
+.br-file a{color:var(--amber2);text-decoration:none;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.br-file a:hover{text-decoration:underline}
+.br-file .fx{cursor:pointer;color:#c0392b;border:none;background:none;font-size:13px;line-height:1;padding:0 2px}
+.br-addfile{display:inline-block;cursor:pointer;font-size:12px;font-weight:700;color:#241206;background:var(--amber);border-radius:7px;padding:8px 13px}
+.br-addfile:hover{background:var(--amber2);color:#fff}
+.br-empty{font-size:11.5px;color:var(--muted2)}
 .br-tip{display:block;font-size:10px;color:var(--muted2);margin-top:4px}
 .br-scroll{overflow-x:auto}
 .br-t{width:100%;border-collapse:collapse;margin-bottom:14px}
@@ -302,6 +311,16 @@ const Store = {
   async setField(id,patch){ await sb.from('orders').update(patch).eq('id',id); },
   async setBuy(id,patch){ await sb.from('orders').update(patch).eq('id',id); },
   async setItems(id,items,total){ await sb.from('orders').update({items,total}).eq('id',id); },
+  async setFiles(id,files){ await sb.from('orders').update({files}).eq('id',id); },
+  async uploadFile(id,file){
+    const safe=file.name.replace(/[^\w.\-]+/g,'_');
+    const path='order-'+id+'/'+Date.now()+'-'+safe;
+    const up=await sb.storage.from('order-files').upload(path,file,{contentType:file.type||'application/pdf',upsert:false});
+    if(up.error) throw up.error;
+    const {data}=sb.storage.from('order-files').getPublicUrl(path);
+    return {name:file.name, path, url:data.publicUrl};
+  },
+  async removeFile(path){ await sb.storage.from('order-files').remove([path]); },
   async remove(id){ await sb.from('orders').delete().eq('id',id); }
 };
 
@@ -433,6 +452,7 @@ function openBuy(id){
       
       '<div class="br-rate"><span class="l">Курс USD, ₽</span><input id="br-rrub" type="number" step="0.01" value="'+(o.rate_rub>0?o.rate_rub:90)+'"><span class="br-tip">сколько ₽ за 1 $</span></div>'+
       '<div class="br-rate"><span class="l">Тариф логистики, $/кг</span><input id="br-tariff" type="number" step="0.01" value="'+(o.logi_tariff||0)+'"></div>'+
+      '<div class="br-rate br-docs"><span class="l">Документы (PDF)</span><div class="br-files" id="br-files"></div><label class="br-addfile">+ Прикрепить PDF<input id="br-fileinp" type="file" accept="application/pdf" multiple hidden></label></div>'+
     '</div>'+
     '<div class="br-scroll"><table class="br-t"><thead><tr><th class="l">Наименование</th><th>Кол-во</th><th>Цена USD/шт</th><th>Сумма USD</th><th>Вес/шт, кг</th><th>Общий вес</th><th class="l">Срок производства</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
     '<div class="br-costs"><label>Иные расходы, $ <input class="br-inp" id="br-other" type="number" min="0" step="0.01" value="'+(o.other_usd||0)+'"></label></div>'+
@@ -450,7 +470,9 @@ function openBuy(id){
     '</div>'+
     '<div class="br-save"><button class="btn btn-amber" id="br-savebtn">Сохранить</button><button class="btn btn-line" id="br-closebtn">Закрыть</button><span class="br-saved" id="br-savedmsg"></span></div>';
   // wire inputs
-  document.querySelectorAll('#buyBody input, #buyBody textarea').forEach(el=>el.addEventListener('input',buyCalc));
+  document.querySelectorAll('#buyBody input:not([type=file]), #buyBody textarea').forEach(el=>el.addEventListener('input',buyCalc));
+  renderBuyFiles(o);
+  document.getElementById('br-fileinp').onchange=e=>onBuyFiles(e,o);
   document.getElementById('br-savebtn').onclick=buySave;
   document.getElementById('br-closebtn').onclick=closeBuy;
   buyCalc();
@@ -458,6 +480,35 @@ function openBuy(id){
   document.body.style.overflow='hidden';
 }
 function closeBuy(){ document.getElementById('buyOverlay').classList.remove('on'); document.body.style.overflow=''; buyId=null; }
+function renderBuyFiles(o){
+  const box=document.getElementById('br-files'); if(!box) return;
+  const files=Array.isArray(o.files)?o.files:[];
+  box.innerHTML = files.length ? files.map((f,i)=>
+    '<div class="br-file"><span>📄</span><a href="'+f.url+'" target="_blank" rel="noopener">'+esc(f.name)+'</a><button class="fx" data-i="'+i+'" title="Удалить">✕</button></div>'
+  ).join('') : '<span class="br-empty">Пока нет файлов</span>';
+  box.querySelectorAll('.fx').forEach(b=>b.onclick=async()=>{
+    const i=+b.dataset.i, f=(o.files||[])[i]; if(!f) return;
+    if(!confirm('Удалить файл «'+f.name+'»?')) return;
+    try{ await Store.removeFile(f.path); }catch(_){}
+    o.files=(o.files||[]).filter((_,idx)=>idx!==i);
+    try{ await Store.setFiles(o.id,o.files); }catch(_){}
+    renderBuyFiles(o);
+  });
+}
+async function onBuyFiles(e,o){
+  const inp=e.target, list=[...inp.files]; if(!list.length) return;
+  const label=inp.closest('.br-addfile'), orig=label.firstChild.nodeValue;
+  label.firstChild.nodeValue='Загрузка…';
+  o.files=Array.isArray(o.files)?o.files:[];
+  for(const file of list){
+    if(file.size>15*1024*1024){ alert('Файл «'+file.name+'» больше 15 МБ — пропущен'); continue; }
+    try{ o.files.push(await Store.uploadFile(o.id,file)); }
+    catch(err){ alert('Не удалось загрузить «'+file.name+'»: '+(err.message||err)); }
+  }
+  try{ await Store.setFiles(o.id,o.files); }catch(_){}
+  label.firstChild.nodeValue=orig; inp.value='';
+  renderBuyFiles(o);
+}
 function buyCalc(){
   const o = ORDERS.find(x=>String(x.id)===String(buyId)); if(!o) return;
   const items = o.items||[];
