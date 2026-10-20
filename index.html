@@ -66,7 +66,7 @@ const PECRON_SUPA_KEY = 'sb_publishable_y4WNtj5TyfyAEZE4bluvgg_9i8wxnop';
 
   /* HEADER */
   .sticky-top{position:sticky; top:0; z-index:40;}
-  header{background:#28333a; width:100%; padding:12px 32px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,.08); box-sizing:border-box; transition:box-shadow .35s ease;}
+  header{background:#28333a; width:100%; padding:12px 32px; display:flex; justify-content:space-between; align-items:center; gap:18px; border-bottom:1px solid rgba(255,255,255,.08); box-sizing:border-box; transition:box-shadow .35s ease;}
   header.scrolled{box-shadow:0 10px 30px -16px rgba(0,0,0,.55);}
   .brand{display:flex; align-items:center; gap:10px;}
   .logo-plate{background:#fbf8f2; border-radius:11px; padding:7px 15px; display:flex; align-items:center; gap:12px; box-shadow:0 4px 14px -6px rgba(0,0,0,.5);}
@@ -78,6 +78,15 @@ const PECRON_SUPA_KEY = 'sb_publishable_y4WNtj5TyfyAEZE4bluvgg_9i8wxnop';
   nav.mainnav{display:flex; gap:30px;}
   nav.mainnav a{color:#d6d7db; text-decoration:none; font-size:14px; font-weight:500;}
   nav.mainnav a:hover{color:var(--amber-hot);}
+  .head-contacts{display:flex; align-items:center; gap:10px;}
+  .hc-link{display:flex; align-items:center; gap:10px; background:transparent; border:none; cursor:pointer; color:#fff; font-family:var(--body); text-align:left; padding:7px 14px; border-radius:11px; transition:background .16s ease;}
+  .hc-link:hover{background:rgba(255,255,255,.09);}
+  .hc-link svg{width:18px; height:18px; color:var(--amber); flex:none;}
+  .hc-link span{display:block; font-size:13.5px; font-weight:600; line-height:1.2;}
+  .hc-link small{display:block; font-size:10.5px; color:#9aa6ad; font-weight:400; margin-top:2px;}
+  @media(max-width:1120px){ .hc-link small{display:none;} }
+  @media(max-width:900px){ .hc-link span{display:none;} .hc-link{padding:9px;} .hc-link svg{width:20px;height:20px;} }
+  @media(max-width:560px){ .head-contacts{display:none;} }
   .header-actions{display:flex; align-items:center; gap:12px;}
   .cart-btn{background:var(--amber); border:none; color:#1f1a0a; border-radius:10px; padding:11px 17px; font-family:var(--body); font-size:13.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background .2s ease, transform .08s ease;}
   .cart-btn:hover{background:var(--amber-hot);}
@@ -368,10 +377,17 @@ html.gated{overflow:hidden!important}
   <div class="brand">
     <div class="logo-plate"><img class="pecron-logo" src="data:image/png;base64,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" alt="Pecron"></div>
   </div>
-  <div class="header-actions">
-    <button class="info-btn" onclick="openTerms()" aria-label="Условия сотрудничества">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+  <div class="head-contacts">
+    <button class="hc-link" onclick="downloadPriceList()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>Скачать прайс<small>PDF · все позиции</small></span>
     </button>
+    <button class="hc-link" onclick="openTerms()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+      <span>Условия<small>оптовикам и дилерам</small></span>
+    </button>
+  </div>
+  <div class="header-actions">
     <button class="cart-btn" onclick="toggleCart(true)">
       🛒 <span class="cart-label">Заказ</span> <span class="cart-count" id="cartCount">0</span>
     </button>
@@ -758,6 +774,50 @@ async function submitOrder(){
 }
 
 function fmtPdf(n){ return n.toLocaleString('ru-RU') + ' ₽'; }
+
+/* Прайс-лист всего каталога в PDF */
+function downloadPriceList(){
+  if(!window.jspdf){ alert('Не удалось загрузить модуль PDF. Проверьте соединение и попробуйте ещё раз.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.addFileToVFS('Roboto-Regular.ttf', ROBOTO_REGULAR_B64);
+  doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+  doc.addFileToVFS('Roboto-Bold.ttf', ROBOTO_BOLD_B64);
+  doc.addFont('Roboto-Bold.ttf', 'Roboto', 'bold');
+
+  const date = new Date().toLocaleDateString('ru-RU');
+  doc.setFont('Roboto','bold'); doc.setFontSize(18);
+  doc.text('Прайс-лист Pecron', 14, 20);
+  doc.setFont('Roboto','normal'); doc.setFontSize(10);
+  doc.text('Дата: ' + date, 14, 27);
+
+  let y = 38;
+  CATEGORIES.forEach(cat => {
+    const items = products.filter(p => p.cat === cat.id);
+    if(!items.length) return;
+    if(y > 262){ doc.addPage(); y = 20; }
+    doc.setFont('Roboto','bold'); doc.setFontSize(12);
+    doc.text(cat.label, 14, y); y += 3;
+    doc.setDrawColor(220,220,220); doc.line(14, y, 196, y); y += 7;
+
+    doc.setFont('Roboto','normal'); doc.setFontSize(9);
+    items.forEach(p => {
+      if(y > 278){ doc.addPage(); y = 20; }
+      const price = p.price ? fmt(p.price) + ' \u20BD' : 'по запросу';
+      doc.text(String(p.name).substring(0,46), 14, y);
+      doc.text(String(p.sku || ''), 110, y);
+      doc.text(price, 196, y, { align:'right' });
+      y += 6;
+    });
+    y += 6;
+  });
+
+  if(y > 266){ doc.addPage(); y = 20; }
+  doc.setFontSize(8); doc.setTextColor(130,130,130);
+  doc.text('Цены ориентировочные и уточняются при согласовании заказа.', 14, y + 4);
+
+  doc.save('price-pecron-' + new Date().toISOString().slice(0,10) + '.pdf');
+}
 
 function downloadPDF(){
   if(Object.keys(cart).length === 0){ alert('Корзина пуста'); return; }
