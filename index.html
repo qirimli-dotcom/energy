@@ -79,10 +79,10 @@ const PECRON_SUPA_KEY = 'sb_publishable_y4WNtj5TyfyAEZE4bluvgg_9i8wxnop';
   nav.mainnav a{color:#d6d7db; text-decoration:none; font-size:14px; font-weight:500;}
   nav.mainnav a:hover{color:var(--amber-hot);}
   .header-actions{display:flex; align-items:center; gap:12px;}
-  .cart-btn{background:var(--amber); border:none; color:#fff; border-radius:10px; padding:11px 17px; font-family:var(--body); font-size:13.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background .2s ease, transform .08s ease;}
+  .cart-btn{background:var(--amber); border:none; color:#1f1a0a; border-radius:10px; padding:11px 17px; font-family:var(--body); font-size:13.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background .2s ease, transform .08s ease;}
   .cart-btn:hover{background:var(--amber-hot);}
   .cart-btn:active{transform:translateY(1px);}
-  .cart-count{background:#0a3b3f; color:#fff; border-radius:5px; padding:1px 6px; font-size:11px; font-weight:700;}
+  .cart-count{background:#1f1a0a; color:#ffd400; border-radius:5px; padding:1px 6px; font-size:11px; font-weight:700;}
   @media(max-width:880px){ nav.mainnav{display:none;} }
   @media(max-width:560px){
     header{padding:12px 16px;}
@@ -148,14 +148,17 @@ const PECRON_SUPA_KEY = 'sb_publishable_y4WNtj5TyfyAEZE4bluvgg_9i8wxnop';
   .eng-row .val{font-family:var(--mono); color:var(--amber-hot); font-size:15px; font-weight:600; white-space:nowrap;}
 
   /* CATALOG */
-  .cat-tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
-  .cat-tab{padding:12px 22px; border-radius:12px; border:none; background:var(--paper-card); font-size:14px; font-weight:600; cursor:pointer; color:var(--text-light); box-shadow:0 2px 8px -3px rgba(60,40,20,.12); transition:transform .14s ease, box-shadow .14s ease;}
-  .cat-tab:hover{transform:translateY(-1px); box-shadow:0 6px 14px -5px rgba(60,40,20,.18);}
-  .cat-tab.active{background:var(--amber); color:#fff; box-shadow:0 9px 20px -7px rgba(10,150,160,.42);}
+  .cat-tabs{display:inline-flex; gap:4px; flex-wrap:wrap; margin-bottom:14px; background:var(--paper-card); padding:5px; border-radius:15px; box-shadow:0 2px 10px -4px rgba(60,40,20,.16);}
+  .cat-tab{display:flex; align-items:center; gap:7px; padding:11px 19px; border-radius:11px; border:none; background:transparent; font-size:14px; font-weight:600; cursor:pointer; color:var(--text-light-soft); transition:color .15s ease, background .15s ease;}
+  .cat-tab:hover{color:var(--text-light); background:#f6f2ea;}
+  .cat-tab .n{font-size:11px; font-weight:700; padding:1px 7px; border-radius:20px; background:#f0ebe1; color:#9b907f;}
+  .cat-tab.active{background:var(--amber); color:#1f1a0a; box-shadow:0 7px 16px -7px rgba(200,165,0,.75);}
+  .cat-tab.active .n{background:rgba(31,26,10,.16); color:#1f1a0a;}
+  @media(max-width:640px){ .cat-tabs{display:flex; width:100%;} .cat-tab{flex:1; justify-content:center; padding:11px 12px; font-size:13px;} .cat-tab .n{display:none;} }
   .catalog-toolbar{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; margin-bottom:36px;}
   .cap-filters{display:flex; gap:8px; flex-wrap:wrap;}
   .cap-chip{padding:7px 14px; border-radius:8px; border:1px solid var(--line-light); background:transparent; font-size:11.5px; font-weight:600; text-transform:uppercase; letter-spacing:.02em; cursor:pointer; color:var(--text-light-soft); font-family:var(--mono);}
-  .cap-chip.active{background:var(--amber); border-color:var(--amber); color:#fff;}
+  .cap-chip.active{background:var(--amber); border-color:var(--amber); color:#1f1a0a;}
   .search{width:270px; padding:12px 16px; border:none; border-radius:12px; font-size:14px; font-family:var(--body); background:var(--paper-card); color:var(--text-light); box-shadow:0 2px 8px -3px rgba(60,40,20,.12);}
   .search::placeholder{color:#b3ab9b;}
   .search:focus{outline:none; box-shadow:0 0 0 2px var(--amber);}
@@ -172,14 +175,14 @@ const PECRON_SUPA_KEY = 'sb_publishable_y4WNtj5TyfyAEZE4bluvgg_9i8wxnop';
   .thumb::after{content:""; position:absolute; bottom:15%; left:50%; transform:translateX(-50%); width:58%; height:16px; background:rgba(45,28,10,.16); filter:blur(11px); border-radius:50%; z-index:0;}
   .thumb img{position:relative; z-index:1; width:84%; height:84%; object-fit:contain; filter:drop-shadow(0 10px 16px rgba(45,28,10,.12));}
   .thumb .no-photo{font-size:11px; color:#c4c0b2; font-family:var(--mono);}
-  .badge{position:absolute; top:14px; left:14px; z-index:2; background:var(--amber); color:#fff; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:5px 11px; border-radius:7px; font-family:var(--body); box-shadow:0 5px 12px -4px rgba(10,150,160,.5);}
+  .badge{position:absolute; top:14px; left:14px; z-index:2; background:var(--amber); color:#1f1a0a; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:5px 11px; border-radius:7px; font-family:var(--body); box-shadow:0 5px 12px -4px rgba(200,165,0,.5);}
   .card-main{flex:1; min-width:0; padding:26px 30px; display:flex; flex-direction:column; justify-content:center;}
   .card-side{width:256px; flex:none; padding:26px 28px; display:flex; flex-direction:column; justify-content:center; gap:11px; background:linear-gradient(180deg,#fffefb,#faf6ef); border-left:1px solid var(--line-light);}
   .card h3{font-family:var(--display); font-size:19px; font-weight:600; letter-spacing:-.01em; color:var(--text-light); margin-bottom:4px;}
   .card .sku{font-family:var(--mono); font-size:10.5px; color:#b3ab9b; letter-spacing:.03em; margin-bottom:20px;}
   .specs{display:grid; grid-template-columns:1fr 1fr; gap:15px 34px; padding-top:19px; border-top:1px solid var(--line-light);}
   .spec-row{display:grid; grid-template-columns:30px 1fr; grid-template-rows:auto auto; column-gap:11px; align-items:center;}
-  .spec-icon{grid-row:1/3; width:30px; height:30px; border-radius:9px; background:#f4efe6; display:flex; align-items:center; justify-content:center; color:var(--amber-deep);}
+  .spec-icon{grid-row:1/3; width:30px; height:30px; border-radius:9px; background:#fff6c9; display:flex; align-items:center; justify-content:center; color:#8a6d00;}
   .spec-icon svg{width:14px; height:14px;}
   .spec-label{font-size:10.5px; color:var(--text-light-soft); text-transform:uppercase; letter-spacing:.04em; align-self:flex-end;}
   .spec-value{font-family:var(--display); font-size:14px; font-weight:600; color:var(--text-light); line-height:1.25; align-self:flex-start;}
@@ -188,7 +191,7 @@ const PECRON_SUPA_KEY = 'sb_publishable_y4WNtj5TyfyAEZE4bluvgg_9i8wxnop';
   .price{font-family:var(--display); font-size:25px; font-weight:700; color:var(--text-light); letter-spacing:-.015em;}
   .price-req{font-family:var(--body); font-size:15px; font-weight:600; color:var(--text-light-soft); font-style:italic;}
   .price .cur{font-size:14px; color:var(--text-light-soft); font-weight:500; margin-left:1px;}
-  .add-btn{width:100%; background:var(--amber); color:#fff; border:none; border-radius:12px; padding:14px; font-size:14px; font-weight:700; cursor:pointer; font-family:var(--body); box-shadow:0 9px 20px -8px rgba(10,150,160,.45); transition:background .18s ease, transform .1s ease;}
+  .add-btn{width:100%; background:var(--amber); color:#1f1a0a; border:none; border-radius:12px; padding:14px; font-size:14px; font-weight:700; cursor:pointer; font-family:var(--body); box-shadow:0 9px 20px -8px rgba(200,165,0,.5); transition:background .18s ease, transform .1s ease;}
   .add-btn:hover{background:var(--amber-deep); transform:translateY(-1px);}
   .detail-btn{width:100%; background:#f1ebe1; color:var(--text-light); border:none; border-radius:12px; padding:12px; font-size:13px; font-weight:600; cursor:pointer; font-family:var(--body); transition:background .15s ease;}
   .detail-btn:hover{background:#e9e1d4;}
@@ -464,9 +467,10 @@ let currentCat = 'stations';
 function fmt(n){ return n.toLocaleString('ru-RU'); }
 
 function renderTabs(){
-  document.getElementById('catTabs').innerHTML = CATEGORIES.map(c =>
-    `<div class="cat-tab ${c.id===currentCat?'active':''}" onclick="switchCat('${c.id}')">${c.label}</div>`
-  ).join('');
+  document.getElementById('catTabs').innerHTML = CATEGORIES.map(c => {
+    const n = products.filter(p => p.cat === c.id).length;
+    return `<div class="cat-tab ${c.id===currentCat?'active':''}" onclick="switchCat('${c.id}')">${c.label}<span class="n">${n}</span></div>`;
+  }).join('');
 }
 
 function switchCat(id){
