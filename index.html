@@ -86,7 +86,7 @@ const PECRON_SUPA_KEY = 'sb_publishable_y4WNtj5TyfyAEZE4bluvgg_9i8wxnop';
   .hc-link small{display:block; font-size:10.5px; color:#9aa6ad; font-weight:400; margin-top:2px;}
   @media(max-width:1120px){ .hc-link small{display:none;} }
   @media(max-width:900px){ .hc-link span{display:none;} .hc-link{padding:9px;} .hc-link svg{width:20px;height:20px;} }
-  @media(max-width:560px){ .head-contacts{display:none;} }
+  @media(max-width:560px){ .head-contacts .hc-link:first-child{display:none;} .head-contacts{margin-left:auto; margin-right:2px;} }
   .header-actions{display:flex; align-items:center; gap:12px;}
   .cart-btn{background:var(--amber); border:none; color:#1f1a0a; border-radius:10px; padding:11px 17px; font-family:var(--body); font-size:13.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background .2s ease, transform .08s ease;}
   .cart-btn:hover{background:var(--amber-hot);}
@@ -252,20 +252,53 @@ const PECRON_SUPA_KEY = 'sb_publishable_y4WNtj5TyfyAEZE4bluvgg_9i8wxnop';
   .qtym-actions .add{flex:1; background:var(--amber); color:var(--ink); border:none; border-radius:10px; padding:13px; font-weight:700; font-size:14px; cursor:pointer; font-family:var(--body);}
   .qtym-actions .add:hover{background:var(--amber-hot);}
   .qtym-actions .cancel{background:transparent; border:1.5px solid var(--line-light); color:var(--text-light); border-radius:10px; padding:13px 16px; font-weight:600; font-size:13px; cursor:pointer; font-family:var(--body);}
-  @media(max-width:860px){
-    .card{flex-direction:column;}
-    .thumb{width:100%; min-height:200px; border-right:none; border-bottom:1px solid var(--line-light);}
-    .card-side{width:100%; border-left:none; border-top:1px dashed var(--line-light); justify-content:flex-start;}
-    .specs{grid-template-columns:1fr 1fr;}
+  @media(max-width:860px) and (min-width:641px){
+    .card{display:grid; grid-template-columns:168px 1fr;}
+    .thumb{width:168px; min-height:0; height:100%; border-right:1px solid var(--line-light); border-bottom:none;}
+    .card-main{padding:18px 20px 15px;}
+    .card h3{font-size:17px;}
+    .card .sku{margin-bottom:13px;}
+    .specs{grid-template-columns:1fr 1fr; gap:12px 20px; padding-top:14px;}
+    .card-side{grid-column:1/3; width:100%; flex-direction:row; align-items:center; gap:12px; padding:14px 20px; border-left:none; border-top:1px solid var(--line-light); background:linear-gradient(180deg,#fffefb,#faf6ef);}
+    .price-row{margin:0; flex:1 0 auto;}
+    .detail-btn{width:auto; padding:12px 20px;}
+    .add-btn{width:auto; padding:12px 26px;}
+    .card-side .qty{flex:1 1 180px;}
   }
   @media(max-width:640px){
-    .grid{gap:14px;}
-    .thumb{min-height:180px;}
-    .card-main{padding:16px 16px 14px;}
-    .card-side{padding:16px;}
-    .specs{grid-template-columns:1fr;}
-        .qty button{height:44px;}
+    .wrap{padding:0 14px;}
+    .grid{gap:12px;}
+    /* карточка: фото слева + текст справа, кнопки снизу в ряд */
+    .card{display:grid; grid-template-columns:104px 1fr; border-radius:16px;}
+    .thumb{width:104px; min-height:0; height:100%; border-bottom:none; border-right:1px solid var(--line-light);}
+    .thumb::after{bottom:11%; width:62%; height:10px; filter:blur(7px);}
+    .card-main{padding:13px 14px 11px; justify-content:flex-start;}
+    .card h3{font-size:15.5px; line-height:1.25; margin-bottom:2px;}
+    .card .sku{font-size:9.5px; margin-bottom:10px;}
+    .specs{grid-template-columns:1fr 1fr; gap:9px 12px; padding-top:11px;}
+    .spec-icon{width:24px; height:24px; border-radius:7px;}
+    .spec-icon svg{width:11px; height:11px;}
+    .spec-label{font-size:9px; letter-spacing:.02em;}
+    .spec-value{font-size:11.5px; line-height:1.2;}
+    .card-side{grid-column:1/3; width:100%; flex-direction:row; align-items:center; flex-wrap:wrap; gap:9px; padding:12px 14px; border-left:none; border-top:1px solid var(--line-light);}
+    .price-row{margin:0; flex:1 0 auto;}
+    .price{font-size:20px;}
+    .detail-btn{width:auto; padding:11px 16px; flex:0 0 auto;}
+    .add-btn{width:auto; padding:11px 20px; flex:0 0 auto;}
+    .card-side .qty{flex:1 1 150px;}
+    .qty button{height:44px;}
+  }
+  @media(max-width:380px){
+    .card{grid-template-columns:92px 1fr;}
+    .thumb{width:92px;}
+    .card-main{padding:11px 11px 9px;}
+    .card h3{font-size:14.5px;}
+    .specs{gap:8px 8px;}
+    .spec-value{font-size:11px;}
+    .card-side{padding:10px 11px; gap:7px;}
     .price{font-size:18px;}
+    .detail-btn{padding:10px 12px; font-size:12px;}
+    .add-btn{padding:10px 15px; font-size:13px;}
   }
 
   /* SUPPORT (dark) */
@@ -325,53 +358,6 @@ const PECRON_SUPA_KEY = 'sb_publishable_y4WNtj5TyfyAEZE4bluvgg_9i8wxnop';
 </style>
 </head>
 <body>
-<!-- ===== Приватный доступ · фальшивая 404 (клик по «404» → пароль pecronwork) ===== -->
-<style>
-#gate404{position:fixed;inset:0;z-index:99999;background:#fff;color:#4f4f4f;display:flex;align-items:flex-start;justify-content:center;overflow:auto;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
-#gate404 .w{max-width:600px;text-align:center;padding:64px 20px}
-#gate404 .n4{font-size:110px;font-weight:900;color:#000;margin:0 0 20px;line-height:1;cursor:default;user-select:none;-webkit-user-select:none;touch-action:manipulation}
-#gate404 .h{font-size:20px;font-weight:700;color:#000;margin:0 0 26px}
-#gate404 .p{font-size:16px;line-height:1.6;margin:0 0 20px}
-#gate404 code{background:#f3f3f3;padding:1px 5px;border-radius:4px;font-family:monospace;font-size:13px}
-#gate404 a{color:#4078c0;text-decoration:none}#gate404 a:hover{text-decoration:underline}
-#gate404 .foot{margin-top:30px;font-size:14px;color:#9e9e9e}
-#gate404 .logo{margin-top:28px;opacity:.5}#gate404 .logo svg{width:32px;height:32px;fill:#bdbdbd}
-#gate404 .lock{display:none;margin:22px auto 0;max-width:280px}
-#gate404 .lock.on{display:block}
-#gate404 .lock input{width:100%;height:42px;border:1px solid #d0d0d0;border-radius:8px;padding:0 13px;font-size:15px;outline:none;text-align:center}
-#gate404 .lock input:focus{border-color:#4078c0}
-#gate404 .lock.err input{border-color:#c0392b;animation:g404sh .3s}
-@keyframes g404sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-html.gated{overflow:hidden!important}
-</style>
-<div id="gate404">
-  <div class="w">
-    <h1 class="n4" id="g404n">404</h1>
-    <p class="h">File not found</p>
-    <p class="p">The site configured at this address does not contain the requested file.</p>
-    <p class="p">If this is your site, make sure that the filename case matches the URL as well as any file permissions.<br>For root URLs (like <code>http://example.com/</code>) you must provide an <code>index.html</code> file.</p>
-    <p class="p"><a href="https://docs.github.com/pages" target="_blank" rel="noopener">Read the full documentation</a> for more information about using <strong>GitHub Pages</strong>.</p>
-    <div class="foot"><a href="https://www.githubstatus.com/" target="_blank" rel="noopener">GitHub Status</a> — <a href="https://twitter.com/githubstatus" target="_blank" rel="noopener">@githubstatus</a></div>
-    <div class="logo"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></div>
-    <div class="lock" id="g404lock"><input id="g404pw" type="password" placeholder="Пароль" autocomplete="off"></div>
-  </div>
-</div>
-<script>
-(function(){
-  var REAL_TITLE=document.title, PASS='pecronwork', KEY='pecron_unlocked';
-  var gate=document.getElementById('gate404');
-  function unlock(){ gate.style.display='none'; document.documentElement.classList.remove('gated'); document.title=REAL_TITLE; try{sessionStorage.setItem(KEY,'1');}catch(e){} }
-  try{ if(sessionStorage.getItem(KEY)==='1'){ unlock(); return; } }catch(e){}
-  document.title='Site not found · GitHub Pages';
-  document.documentElement.classList.add('gated');
-  var n=document.getElementById('g404n'), lock=document.getElementById('g404lock'), pw=document.getElementById('g404pw');
-  n.addEventListener('click',function(){ lock.classList.add('on'); pw.focus(); });
-  pw.addEventListener('keydown',function(e){ if(e.key==='Enter') check(); });
-  function check(){ if(pw.value===PASS){ unlock(); } else { lock.classList.add('err'); pw.select(); setTimeout(function(){lock.classList.remove('err');},350); } }
-})();
-</script>
-<!-- ===== /Приватный доступ ===== -->
-
 <div class="sticky-top">
 <header>
   <div class="brand">
